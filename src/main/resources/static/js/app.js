@@ -15,11 +15,12 @@ document.getElementById('taskForm').addEventListener('submit', async (e) => {
     }
 });
 
-// タスクの動的追加
+// 追加処理
 function addTaskToDOM(task) {
     const taskList = document.getElementById('taskList');
     const taskDiv = document.createElement('div');
-    taskDiv.className = 'task';
+    taskDiv.className = 'task' + (task.completed ? ' completed' : '');
+    taskDiv.setAttribute('data-id', task.id);
     taskDiv.innerHTML = `
         <span>${task.title}</span>
         <span>${task.dueDate}</span>

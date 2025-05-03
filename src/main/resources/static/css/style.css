@@ -7,18 +7,18 @@
 .task {
     display: flex;
     align-items: center;
-    padding: 10px;
-    margin: 5px 0;
+    padding: 8px;
+    margin: 6px 0;
     border: 1px solid #ddd;
     border-radius: 4px;
 }
 
 .task.completed {
-    background-color: #f0f0f0;
+    background-color: #f9f9f9;
     text-decoration: line-through;
 }
 
 .task button {
     margin-left: auto;
-    padding: 5px 10px;
+    padding: 4px 8px;
 }

@@ -9,5 +9,4 @@ public class LivetaskApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(LivetaskApplication.class, args);
 	}
-
 }
