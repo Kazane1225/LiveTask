@@ -17,25 +17,33 @@ document.getElementById('taskForm').addEventListener('submit', async (e) => {
 
 // 追加処理
 function addTaskToDOM(task) {
-    const taskList = document.getElementById('taskList');
-    const taskDiv = document.createElement('div');
-    taskDiv.className = 'task' + (task.completed ? ' completed' : '');
-    taskDiv.setAttribute('data-id', task.id);
-    taskDiv.innerHTML = `
-        <span>${task.title}</span>
-        <span>${task.dueDate}</span>
-        <button onclick="deleteTask(${task.id})">Delete</button>
-        <button onclick="toggleTask(${task.id})">
-            ${task.completed ? 'Undo' : 'Complete'}
-        </button>
-    `;
-    taskList.appendChild(taskDiv);
+    const template = document.getElementById('taskTemplate');
+    const clone = template.content.cloneNode(true);
+    const taskDiv = clone.querySelector('.task');
+
+    taskDiv.dataset.id = task.id;
+    if (task.completed) taskDiv.classList.add('completed');
+
+    clone.querySelector('.title').textContent = task.title;
+    clone.querySelector('.dueDate').textContent = task.dueDate ?? 'なし';
+
+    const deleteBtn = clone.querySelector('.deleteBtn');
+    deleteBtn.onclick = () => deleteTask(task.id);
+
+    const toggleBtn = clone.querySelector('.toggleBtn');
+    toggleBtn.textContent = task.completed ? 'Undo' : 'Complete';
+    toggleBtn.onclick = () => toggleTask(task.id);
+
+    document.getElementById('taskList').appendChild(clone);
 }
 
 // 削除処理
 async function deleteTask(id) {
     await fetch(`/delete/${id}`, { method: 'POST' });
-    document.querySelector(`.task[data-id="${id}"]`).remove();
+    let deleteFlg = window.confirm('タスクを削除しますか？');
+    if(deleteFlg) {
+        document.querySelector(`.task[data-id="${id}"]`).remove();
+    }
 }
 
 // 完了/未完了切り替え
