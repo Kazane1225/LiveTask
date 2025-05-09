@@ -26,6 +26,13 @@ function addTaskToDOM(task) {
 
     clone.querySelector('.title').textContent = task.title;
     clone.querySelector('.dueDate').textContent = task.dueDate ?? 'なし';
+    if(task.priority == 1) {
+        clone.querySelector('.priority').textContent = '高'
+    } else if(task.priority == 2) {
+        clone.querySelector('.priority').textContent = '中'
+    } else if(task.priority == 3) {
+        clone.querySelector('.priority').textContent = '低'
+    }
 
     const deleteBtn = clone.querySelector('.deleteBtn');
     deleteBtn.onclick = () => deleteTask(task.id);
@@ -48,9 +55,15 @@ async function deleteTask(id) {
 
 // 完了/未完了切り替え
 async function toggleTask(id) {
-    await fetch(`/toggle/${id}`, { method: 'POST' });
+    const response = await fetch(`/toggle/${id}`, { method: 'POST' });
+    if (!response.ok) return;
+
+    const updatedTask = await response.json();
+
     const task = document.querySelector(`.task[data-id="${id}"]`);
-    task.classList.toggle('completed');
-    task.querySelector('button:nth-child(3)').textContent = 
-        task.classList.contains('completed') ? 'Undo' : 'Complete';
+    task.classList.toggle('completed', updatedTask.completed);
+
+    const toggleBtn = task.querySelector('.toggleBtn');
+    toggleBtn.textContent = updatedTask.completed ? '進行中' : '完了';
 }
+

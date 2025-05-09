@@ -3,6 +3,9 @@ package com.example.livetask.controller;
 import com.example.livetask.model.Task;
 import com.example.livetask.repository.TaskRepository;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -37,11 +40,14 @@ public class TaskController {
     }
 
     @PostMapping("/toggle/{id}")
-    public String toggleTask(@PathVariable Long id) {
-        taskRepository.findById(id).ifPresent(task -> {
-            task.setCompleted(!task.isCompleted());
-            taskRepository.save(task);
-        });
-        return "redirect:/";
+    @ResponseBody
+    public Map<String, Object> toggleTask(@PathVariable Long id) {
+        Task task = taskRepository.findById(id).orElseThrow();
+        task.setCompleted(!task.isCompleted());
+        taskRepository.save(task);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("completed", task.isCompleted());
+        return result; // {"completed": true}
     }
 }

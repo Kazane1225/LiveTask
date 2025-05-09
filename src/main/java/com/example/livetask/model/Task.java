@@ -18,6 +18,8 @@ public class Task {
     @Column(name = "due_date", nullable = true)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
+    @Column(name = "priority", nullable = false)
+    private Integer priority;
     @Column(name = "completed", nullable = false)
     private boolean completed;
 
@@ -25,10 +27,11 @@ public class Task {
     public Task() {}
 
     // All-args constructor
-    public Task(Long id, String title, LocalDate due_date, boolean completed) {
+    public Task(Long id, String title, LocalDate due_date, Integer priority, boolean completed) {
         this.id = id;
         this.title = title;
         this.dueDate = due_date;
+        this.priority = priority;
         this.completed = completed;
     }
 
@@ -52,6 +55,13 @@ public class Task {
     }
     public void setDueDate(LocalDate due_date) { 
         this.dueDate = due_date; 
+    }
+
+    public int getPriority() {
+        return this.priority;
+    }
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     public boolean isCompleted() { 
