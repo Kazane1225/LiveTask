@@ -8,15 +8,18 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "task", schema = "public")
+@Table(name = "tasks", schema = "public")
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "title", unique = true, nullable = false, length = 50)
+    @Column(name = "title", nullable = false, length = 50)
     @NotBlank(message = "{task.title.required}")
     private String title;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
     @Column(name = "due_date", nullable = true)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
@@ -29,9 +32,10 @@ public class Task {
     public Task() {}
 
     // All-args constructor
-    public Task(Long id, String title, LocalDate due_date, Integer priority, boolean completed) {
+    public Task(Long id, String title, User user, LocalDate due_date, Integer priority, boolean completed) {
         this.id = id;
         this.title = title;
+        this.user = user;
         this.dueDate = due_date;
         this.priority = priority;
         this.completed = completed;
@@ -50,6 +54,14 @@ public class Task {
     }
     public void setTitle(String title) { 
         this.title = title; 
+    }
+
+    public User getUser() {
+    return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public LocalDate getDueDate() { 
