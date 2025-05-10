@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "task", schema = "public")
@@ -13,12 +14,13 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "title", nullable = true, length = 50)
+    @Column(name = "title", unique = true, nullable = false, length = 50)
+    @NotBlank(message = "{task.title.required}")
     private String title;
     @Column(name = "due_date", nullable = true)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
-    @Column(name = "priority", nullable = false)
+    @Column(name = "priority", nullable = true)
     private Integer priority;
     @Column(name = "completed", nullable = false)
     private boolean completed;
@@ -57,10 +59,10 @@ public class Task {
         this.dueDate = due_date; 
     }
 
-    public int getPriority() {
+    public Integer getPriority() {
         return this.priority;
     }
-    public void setPriority(int priority) {
+    public void setPriority(Integer priority) {
         this.priority = priority;
     }
 

@@ -3,6 +3,8 @@ document.getElementById('taskForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const formData = new FormData(e.target);
+    const errorContainer = document.getElementById('formErrors');
+    errorContainer.innerHTML = '';
     const response = await fetch('/add', {
         method: 'POST',
         body: new URLSearchParams(formData)
@@ -10,8 +12,15 @@ document.getElementById('taskForm').addEventListener('submit', async (e) => {
 
     if (response.ok) {
         const newTask = await response.json();
-        addTaskToDOM(newTask); // DOMに追加
-        e.target.reset(); // フォームクリア
+        addTaskToDOM(newTask);
+        e.target.reset();
+    } else {
+        const errors = await response.json(); // {"title": "...", "priority": "..."}
+        for (const key in errors) {
+            const p = document.createElement('p');
+            p.textContent = errors[key];
+            errorContainer.appendChild(p);
+        }
     }
 });
 
@@ -38,10 +47,14 @@ function addTaskToDOM(task) {
     deleteBtn.onclick = () => deleteTask(task.id);
 
     const toggleBtn = clone.querySelector('.toggleBtn');
-    toggleBtn.textContent = task.completed ? 'Undo' : 'Complete';
+    toggleBtn.textContent = task.completed ? '進行中' : '完了';
     toggleBtn.onclick = () => toggleTask(task.id);
 
-    document.getElementById('taskList').appendChild(clone);
+    const targetList = task.completed
+    ? document.getElementById('completedTasks')
+    : document.getElementById('inProgressTasks');
+
+    targetList.appendChild(clone);
 }
 
 // 削除処理
@@ -65,5 +78,49 @@ async function toggleTask(id) {
 
     const toggleBtn = task.querySelector('.toggleBtn');
     toggleBtn.textContent = updatedTask.completed ? '進行中' : '完了';
+    const targetList = updatedTask.completed
+    ? document.getElementById('completedTasks')
+    : document.getElementById('inProgressTasks');
+
+    targetList.appendChild(task);
 }
+
+let draggedTaskId = null;
+
+function onDragStart(event) {
+  draggedTaskId = event.target.dataset.id;
+}
+
+function onDragOver(event) {
+  event.preventDefault();
+  event.currentTarget.classList.add('dragover');
+}
+
+async function onDrop(event, dropToCompleted) {
+  event.preventDefault();
+  event.currentTarget.classList.remove('dragover');
+
+  const task = document.querySelector(`.task[data-id="${draggedTaskId}"]`);
+  const isCurrentlyCompleted = task.classList.contains('completed');
+
+  // 同じ状態のリストにドロップされた場合は何もしない
+  if (isCurrentlyCompleted === dropToCompleted) {
+    return;
+  }
+
+  const targetList = dropToCompleted
+    ? document.getElementById('completedTasks')
+    : document.getElementById('inProgressTasks');
+
+  const res = await fetch(`/toggle/${draggedTaskId}`, { method: 'POST' });
+  if (!res.ok) return;
+
+  const updated = await res.json();
+  task.classList.toggle('completed', updated.completed);
+  task.querySelector('.toggleBtn').textContent = updated.completed ? '進行中' : '完了';
+
+  targetList.appendChild(task);
+  location.reload();
+}
+
 
