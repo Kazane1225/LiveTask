@@ -37,10 +37,14 @@ public class TaskController {
     }
 
     @GetMapping("/")
-    public String index(Model model, Principal principal) {
-        if (principal == null) {
-            return "redirect:/login";
-        }
+    public String redirectToHome() {
+        return "redirect:/tasks";
+    }
+
+    @GetMapping("/tasks")
+    public String taskList(Model model, Principal principal) {
+        if (principal == null) return "redirect:/login";
+
         String username = principal.getName();
         Optional<User> user = userRepository.findByUsername(username);
         List<Task> tasks = taskRepository.findByUser(user);
@@ -51,6 +55,9 @@ public class TaskController {
     @PostMapping("/add")
     @ResponseBody
     public ResponseEntity<?> addTask(@ModelAttribute @Valid Task task, BindingResult result, Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).build(); // or redirect or error JSON
+        }
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             result.getFieldErrors().forEach(err -> errors.put(err.getField(), err.getDefaultMessage()));
