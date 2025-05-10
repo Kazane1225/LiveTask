@@ -38,6 +38,9 @@ public class TaskController {
 
     @GetMapping("/")
     public String index(Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
         String username = principal.getName();
         Optional<User> user = userRepository.findByUsername(username);
         List<Task> tasks = taskRepository.findByUser(user);
