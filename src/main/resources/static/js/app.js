@@ -43,6 +43,9 @@ function addTaskToDOM(task) {
         clone.querySelector('.priority').textContent = '低'
     }
 
+    taskDiv.setAttribute("draggable", "true");
+    taskDiv.addEventListener("dragstart", onDragStart);
+    
     const deleteBtn = clone.querySelector('.deleteBtn');
     deleteBtn.onclick = () => deleteTask(task.id);
 
@@ -122,5 +125,17 @@ async function onDrop(event, dropToCompleted) {
   targetList.appendChild(task);
   location.reload();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.task').forEach(task => {
+    const id = task.dataset.id;
+    task.querySelector('.deleteBtn')?.addEventListener('click', () => deleteTask(id));
+    task.querySelector('.toggleBtn')?.addEventListener('click', () => toggleTask(id));
+    task.setAttribute("draggable", "true");
+    task.addEventListener("dragstart", onDragStart);
+  });
+});
+
+
 
 

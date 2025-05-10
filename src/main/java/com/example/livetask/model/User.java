@@ -6,8 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
-@Table(name = "users") // "user" は予約語なので "users" にするのが一般的
+@Table(name = "users")
 public class User {
 
     @Id
@@ -29,6 +31,7 @@ public class User {
 
     // タスク一覧との関連
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Task> tasks;
 
     // --- Getter / Setter ---

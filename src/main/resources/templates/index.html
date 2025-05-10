@@ -36,7 +36,6 @@
             th:attr="data-id=${task.id}" 
             class="task" 
             draggable="true"
-            ondragstart="onDragStart(event)"
             th:classappend="${task.completed} ? 'completed'">
             <span class="title" th:text="${task.title}"></span>
             <span>期限:</span>
@@ -44,10 +43,8 @@
             <span>優先度:</span>
             <span class="priority" th:text="${task.priority == 1 ? '高' : task.priority == 2 ? '中' : '低'}"></span>
             <div id="task-buttons">
-              <button class="deleteBtn" th:onclick="'deleteTask(' + ${task.id} + ')'">削除</button>
-              <button class="toggleBtn" th:onclick="'toggleTask(' + ${task.id} + ')'">
-                [[${task.completed} ? '進行中' : '完了']]
-              </button>
+              <button class="deleteBtn">削除</button>
+              <button class="toggleBtn">完了</button>
             </div>
           </div>
         </div>
@@ -59,18 +56,15 @@
               th:if="${task.completed}"
               th:attr="data-id=${task.id}" 
               class="task completed" 
-              draggable="true"
-              ondragstart="onDragStart(event)">
+              draggable="true">
             <span class="title" th:text="${task.title}"></span>
             <span>期限:</span>
             <span class="dueDate" th:text="${task.dueDate != null ? #temporals.format(task.dueDate, 'yyyy/MM/dd') : 'なし'}"></span>
             <span>優先度:</span>
             <span class="priority" th:text="${task.priority == 1 ? '高' : task.priority == 2 ? '中' : '低'}"></span>
             <div id="task-buttons">
-              <button class="deleteBtn" th:onclick="'deleteTask(' + ${task.id} + ')'">削除</button>
-              <button class="toggleBtn" th:onclick="'toggleTask(' + ${task.id} + ')'">
-                [[${task.completed} ? '進行中' : '完了']]
-              </button>
+              <button class="deleteBtn">削除</button>
+              <button class="toggleBtn">完了</button>
             </div>
           </div>
         </div>
