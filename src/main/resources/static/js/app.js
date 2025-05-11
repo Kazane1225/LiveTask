@@ -15,7 +15,7 @@ document.getElementById('taskForm').addEventListener('submit', async (e) => {
         addTaskToDOM(newTask);
         e.target.reset();
     } else {
-        const errors = await response.json(); // {"title": "...", "priority": "..."}
+        const errors = await response.json();
         for (const key in errors) {
             const p = document.createElement('p');
             p.textContent = errors[key];
@@ -31,111 +31,133 @@ function addTaskToDOM(task) {
     const taskDiv = clone.querySelector('.task');
 
     taskDiv.dataset.id = task.id;
-    if (task.completed) taskDiv.classList.add('completed');
+    taskDiv.dataset.user = task.user;
+    taskDiv.classList.toggle('completed', task.completed);
 
     clone.querySelector('.title').textContent = task.title;
     clone.querySelector('.dueDate').textContent = task.dueDate ?? 'なし';
-    if(task.priority == 1) {
-        clone.querySelector('.priority').textContent = '高'
-    } else if(task.priority == 2) {
-        clone.querySelector('.priority').textContent = '中'
-    } else if(task.priority == 3) {
-        clone.querySelector('.priority').textContent = '低'
+    
+    // 厳密な等価演算子を使用
+    if(task.priority === 1) {
+        clone.querySelector('.priority').textContent = '高';
+    } else if(task.priority === 2) {
+        clone.querySelector('.priority').textContent = '中';
+    } else {
+        clone.querySelector('.priority').textContent = '低';
     }
 
     taskDiv.setAttribute("draggable", "true");
     taskDiv.addEventListener("dragstart", onDragStart);
-    
-    const deleteBtn = clone.querySelector('.deleteBtn');
-    deleteBtn.onclick = () => deleteTask(task.id);
-
-    const toggleBtn = clone.querySelector('.toggleBtn');
-    toggleBtn.textContent = task.completed ? '進行中' : '完了';
-    toggleBtn.onclick = () => toggleTask(task.id);
 
     const targetList = task.completed
-    ? document.getElementById('completedTasks')
-    : document.getElementById('inProgressTasks');
+        ? document.getElementById('completedTasks')
+        : document.getElementById('inProgressTasks');
 
     targetList.appendChild(clone);
 }
 
 // 削除処理
 async function deleteTask(id) {
-    await fetch(`/delete/${id}`, { method: 'POST' });
     let deleteFlg = window.confirm('タスクを削除しますか？');
     if(deleteFlg) {
-        document.querySelector(`.task[data-id="${id}"]`).remove();
+        await fetch(`/delete/${id}`, { method: 'POST' });
+        document.querySelector(`.task[data-id="${id}"]`)?.remove();
     }
 }
 
 // 完了/未完了切り替え
 async function toggleTask(id) {
-    const response = await fetch(`/toggle/${id}`, { method: 'POST' });
+    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+    const response = await fetch(`/toggle/${id}`, {
+        method: 'POST',
+        headers: {
+            [csrfHeader]: csrfToken
+        }
+    });
     if (!response.ok) return;
 
     const updatedTask = await response.json();
-
     const task = document.querySelector(`.task[data-id="${id}"]`);
+    
     task.classList.toggle('completed', updatedTask.completed);
-
     const toggleBtn = task.querySelector('.toggleBtn');
     toggleBtn.textContent = updatedTask.completed ? '進行中' : '完了';
+
     const targetList = updatedTask.completed
-    ? document.getElementById('completedTasks')
-    : document.getElementById('inProgressTasks');
+        ? document.getElementById('completedTasks')
+        : document.getElementById('inProgressTasks');
 
     targetList.appendChild(task);
 }
 
+// ドラッグ&ドロップ機能
 let draggedTaskId = null;
 
 function onDragStart(event) {
-  draggedTaskId = event.target.dataset.id;
+    draggedTaskId = event.target.closest('.task').dataset.id;
 }
 
 function onDragOver(event) {
-  event.preventDefault();
-  event.currentTarget.classList.add('dragover');
+    event.preventDefault();
+    event.currentTarget.classList.add('dragover');
 }
 
 async function onDrop(event, dropToCompleted) {
-  event.preventDefault();
-  event.currentTarget.classList.remove('dragover');
+    event.preventDefault();
+    event.currentTarget.classList.remove('dragover');
 
-  const task = document.querySelector(`.task[data-id="${draggedTaskId}"]`);
-  const isCurrentlyCompleted = task.classList.contains('completed');
+    const task = document.querySelector(`.task[data-id="${draggedTaskId}"]`);
+    const isCurrentlyCompleted = task.classList.contains('completed');
 
-  // 同じ状態のリストにドロップされた場合は何もしない
-  if (isCurrentlyCompleted === dropToCompleted) {
-    return;
-  }
+    if (isCurrentlyCompleted === dropToCompleted) return;
 
-  const targetList = dropToCompleted
-    ? document.getElementById('completedTasks')
-    : document.getElementById('inProgressTasks');
+    const targetList = dropToCompleted
+        ? document.getElementById('completedTasks')
+        : document.getElementById('inProgressTasks');
 
-  const res = await fetch(`/toggle/${draggedTaskId}`, { method: 'POST' });
-  if (!res.ok) return;
+    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
 
-  const updated = await res.json();
-  task.classList.toggle('completed', updated.completed);
-  task.querySelector('.toggleBtn').textContent = updated.completed ? '進行中' : '完了';
+    const res = await fetch(`/toggle/${draggedTaskId}`, {
+        method: 'POST',
+        headers: {
+            [csrfHeader]: csrfToken
+        }
+    });
+    if (!res.ok) return;
 
-  targetList.appendChild(task);
-  location.reload();
+    const updated = await res.json();
+    task.classList.toggle('completed', updated.completed);
+    task.querySelector('.toggleBtn').textContent = updated.completed ? '進行中' : '完了';
+    targetList.appendChild(task);
 }
 
+// イベントデリゲーションの設定
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.task').forEach(task => {
-    const id = task.dataset.id;
-    task.querySelector('.deleteBtn')?.addEventListener('click', () => deleteTask(id));
-    task.querySelector('.toggleBtn')?.addEventListener('click', () => toggleTask(id));
-    task.setAttribute("draggable", "true");
-    task.addEventListener("dragstart", onDragStart);
-  });
+    // 動的要素用のイベントリスナー
+    const setupDynamicListeners = (container) => {
+        container.addEventListener('click', (e) => {
+            const task = e.target.closest('.task');
+            if (!task) return;
+
+            if (e.target.classList.contains('deleteBtn')) {
+                deleteTask(task.dataset.id);
+            }
+            if (e.target.classList.contains('toggleBtn')) {
+                toggleTask(task.dataset.id);
+            }
+        });
+
+        container.addEventListener('dragstart', (e) => {
+            if (e.target.classList.contains('task')) {
+                onDragStart(e);
+            }
+        });
+    };
+
+    // 両方のタスクリストに適用
+    setupDynamicListeners(document.getElementById('inProgressTasks'));
+    setupDynamicListeners(document.getElementById('completedTasks'));
 });
-
-
-
-

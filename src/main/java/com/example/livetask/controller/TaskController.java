@@ -101,7 +101,10 @@ public class TaskController {
         taskRepository.save(task);
 
         Map<String, Object> result = new HashMap<>();
+        result.put("id", task.getId());
         result.put("completed", task.isCompleted());
+        result.put("title", task.getTitle());
+        result.put("priority", task.getPriority());
         return result;
     }
 }
