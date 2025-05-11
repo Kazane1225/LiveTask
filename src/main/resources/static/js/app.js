@@ -99,11 +99,6 @@ function onDragStart(event) {
     draggedTaskId = event.target.closest('.task').dataset.id;
 }
 
-function onDragOver(event) {
-    event.preventDefault();
-    event.currentTarget.classList.add('dragover');
-}
-
 async function onDrop(event, dropToCompleted) {
     event.preventDefault();
     event.currentTarget.classList.remove('dragover');
@@ -142,6 +137,9 @@ new Sortable(document.getElementById('inProgressTasks'), {
     const id = evt.item.dataset.id;
     const from = evt.from.id;
     const to = evt.to.id;
+
+    evt.from.classList.remove('dragover');
+    evt.to.classList.remove('dragover');
 
     if (from !== to) {
       await fetch(`/toggle/${id}`, {
