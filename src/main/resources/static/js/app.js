@@ -134,6 +134,35 @@ async function onDrop(event, dropToCompleted) {
     targetList.appendChild(task);
 }
 
+// 進行中タスクの並べ替え + ドロップ先切り替え
+new Sortable(document.getElementById('inProgressTasks'), {
+  group: 'tasks',
+  animation: 150,
+  onEnd: async (evt) => {
+    const id = evt.item.dataset.id;
+    const from = evt.from.id;
+    const to = evt.to.id;
+
+    if (from !== to) {
+      await fetch(`/toggle/${id}`, {
+        method: 'POST',
+        headers: { [csrfHeader]: csrfToken }
+      });
+    }
+  }
+});
+
+new Sortable(document.getElementById('completedTasks'), {
+  group: 'tasks',
+  animation: 150
+});
+
+flatpickr("input[type='date']", {
+  dateFormat: "Y-m-d",
+  locale: "ja"
+});
+
+
 // イベントデリゲーションの設定
 document.addEventListener('DOMContentLoaded', () => {
     // 動的要素用のイベントリスナー
