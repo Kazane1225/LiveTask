@@ -3,10 +3,13 @@
   <meta charset="UTF-8">
   <title>Register - LiveTask</title>
   <link rel="stylesheet" th:href="@{/css/auth.css}">
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="auth-container">
+    <h1>LiveTask</h1>
     <h2>新規登録</h2>
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
     <form th:action="@{/register}" method="post" th:object="${user}">
       <input type="text" th:field="*{username}" placeholder="ユーザー名" required>
       <input type="email" th:field="*{email}" placeholder="メールアドレス" required>

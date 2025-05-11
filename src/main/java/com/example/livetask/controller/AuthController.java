@@ -1,6 +1,9 @@
 package com.example.livetask.controller;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +25,9 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @GetMapping("/login")
     public String login() {
         return "login";
@@ -34,9 +40,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute User user) {
+    public String register(@ModelAttribute User user, Model model, Locale locale) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            return "redirect:/register?error";
+            String message = messageSource.getMessage("register.duplicate", null, locale);
+            model.addAttribute("error", message);
+            model.addAttribute("user", user);
+            return "register";
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
