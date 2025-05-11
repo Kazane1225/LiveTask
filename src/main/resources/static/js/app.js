@@ -154,12 +154,16 @@ new Sortable(document.getElementById('inProgressTasks'), {
 
 new Sortable(document.getElementById('completedTasks'), {
   group: 'tasks',
-  animation: 150
+  animation: 150,
+  delay: 150,
+  delayOnTouchOnly: true,
 });
 
 flatpickr("input[type='date']", {
   dateFormat: "Y-m-d",
-  locale: "ja"
+  locale: "ja",
+  clickOpens: true,
+  allowInput: true
 });
 
 

@@ -7,7 +7,12 @@
       box-sizing: inherit;
     }
   }
-  
+
+  input[type="date"] {
+  appearance: auto;
+  -webkit-appearance: auto;
+  }
+
   /* 見出し */
   h1 {
     font-size: 28px;
