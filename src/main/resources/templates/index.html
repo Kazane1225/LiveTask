@@ -20,7 +20,7 @@
     <div id="formErrors" class="error-messages"></div>
     <form id="taskForm" th:action="@{/add}" method="post">
       <input type="text" name="title" placeholder="タスク名">
-      <input type="text" name="dueDate" placeholder=" 年/ 月 /日">
+      <input type="text" name="dueDate" placeholder="期限: 年/ 月 /日" autocomplete="off">
       <label for="priority">優先度</label>
       <select name="priority" id="priority">
         <option value="" disabled selected>--------</option>

@@ -134,7 +134,8 @@ flatpickr("input[name='dueDate']", {
   dateFormat: 'Y-m-d',
   locale: 'ja',
   clickOpens: true,
-  allowInput: true
+  allowInput: true,
+  disableMobile: true
 });
 
 // ボタン操作のイベント委任
