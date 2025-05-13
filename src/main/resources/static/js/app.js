@@ -128,6 +128,7 @@ new Sortable(document.getElementById('inProgressTasks'), {
   animation: 150,
   onEnd: handleTaskDropToggle,
   filter: '.deleteBtn, .toggleBtn',
+  preventOnFilter: false  
 });
 
 new Sortable(document.getElementById('completedTasks'), {
@@ -138,6 +139,7 @@ new Sortable(document.getElementById('completedTasks'), {
   touchStartThreshold: 5,
   onEnd: handleTaskDropToggle,
   filter: '.deleteBtn, .toggleBtn',
+  preventOnFilter: false  
 });
 
 // カレンダーUI
