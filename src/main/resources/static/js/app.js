@@ -126,7 +126,8 @@ async function handleTaskDropToggle(evt) {
 new Sortable(document.getElementById('inProgressTasks'), {
   group: 'tasks',
   animation: 150,
-  onEnd: handleTaskDropToggle
+  onEnd: handleTaskDropToggle,
+  filter: '.deleteBtn, .toggleBtn',
 });
 
 new Sortable(document.getElementById('completedTasks'), {
@@ -135,7 +136,8 @@ new Sortable(document.getElementById('completedTasks'), {
   delay: 150,
   delayOnTouchOnly: true,
   touchStartThreshold: 5,
-  onEnd: handleTaskDropToggle
+  onEnd: handleTaskDropToggle,
+  filter: '.deleteBtn, .toggleBtn',
 });
 
 // カレンダーUI
