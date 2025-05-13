@@ -1,101 +1,156 @@
+/* 認証共通スタイル */
 body {
   font-family: "Segoe UI", sans-serif;
-  background: linear-gradient(to right, #cce0ff, #f0f8ff);
+  background: linear-gradient(135deg, #cce0ff, #e8f2ff);
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   margin: 0;
+  overflow: hidden;
 }
 
 .auth-container {
-  background-color: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 80, 180, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  max-width: 400px;
+  padding: 20px;
 }
 
-.auth-container h1 {
+.auth-card {
+  background-color: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 80, 180, 0.2);
+  width: 100%;
+  max-width: 420px;
+  animation: fadeInUp 0.5s ease;
+}
+
+.auth-card h1 {
   font-family: 'Zen Kaku Gothic New', sans-serif;
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   background: linear-gradient(to right, #3a8dde, #6fb3ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 1px 1px 2px rgba(0, 0, 128, 0.2);
+  text-align: center;
   margin-bottom: 20px;
 }
 
-.auth-container h2 {
+.auth-card h2 {
   margin-bottom: 24px;
   color: #1f4e79;
   font-size: 24px;
   text-align: center;
+  position: relative;
 }
 
-.auth-container input {
-  width: 100%;
-  padding: 12px;
+.auth-card h2::after {
+  content: "";
+  display: block;
+  height: 2px;
+  width: 40px;
+  background-color: #4a90e2;
+  margin: 8px auto 0 auto;
+  border-radius: 2px;
+}
+
+.auth-card input {
+  width: 93%;
+  padding: 14px;
   margin-bottom: 16px;
   border: 1px solid #aacbe2;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 16px;
   background-color: #f5faff;
+  transition: border-color 0.2s;
 }
 
-.auth-container button {
+.auth-card input:focus {
+  border-color: #4a90e2;
+  outline: none;
+  box-shadow: 0 0 4px rgba(74, 144, 226, 0.5);
+}
+
+.auth-card button {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   background-color: #1f75fe;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-.auth-container button:hover {
+.auth-card button:hover {
   background-color: #155fcf;
+  transform: translateY(-1px);
 }
 
-.auth-container .link {
-  margin-top: 12px;
+.auth-card .link {
+  margin-top: 16px;
   text-align: center;
   font-size: 14px;
 }
 
-.auth-form button {
-  width: 100%;
-  padding: 12px;
-  background-color: #1f75fe;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+.auth-card .link a {
+  color: #1f75fe;
+  text-decoration: none;
 }
 
-.auth-form input {
-  width: 94%;
-  padding: 12px;
-  margin-bottom: 16px;
-  border: 1px solid #aacbe2;
-  border-radius: 6px;
+.auth-card .link a:hover {
+  text-decoration: underline;
+}
+
+.success-message,
+.error-message {
+  margin: 10px 0;
   font-size: 16px;
-  background-color: #f5faff;
+  font-weight: 500;
+  text-align: center;
+  padding: 10px;
+  border-radius: 6px;
 }
 
 .success-message {
+  background-color: #e0f2ff;
   color: #0565ff;
-  margin: 10px 0;
-  font-size: 18px;
+  border: 1px solid #81c4ff;
 }
 
 .error-message {
-  color: #0565ff;
-  margin: 10px 0;
-  font-size: 18px;
+  background-color: #ffe8e8;
+  color: #e03131;
+  border: 1px solid #ff9090;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 30px 20px;
+  }
+
+  .auth-card h1 {
+    font-size: 2.2rem;
+  }
+
+  .auth-card input,
+  .auth-card button {
+    font-size: 15px;
+    padding: 12px;
+  }
 }

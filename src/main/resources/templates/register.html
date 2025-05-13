@@ -1,24 +1,26 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register - LiveTask</title>
   <link rel="stylesheet" th:href="@{/css/auth.css}">
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="auth-container">
-    <h1>LiveTask</h1>
-    <h2>新規登録</h2>
-    <div th:if="${error}" class="error-message" th:text="${error}"></div>
-    <form th:action="@{/register}" method="post" th:object="${user}">
-      <input type="text" th:field="*{username}" placeholder="ユーザー名" required>
-      <input type="email" th:field="*{email}" placeholder="メールアドレス" required>
-      <input type="password" th:field="*{password}" placeholder="パスワード" required>
-      <button type="submit">登録</button>
-      <div class="link">
-        <a th:href="@{/login}">ログインへ戻る</a>
-      </div>
-    </form>
+    <div class="auth-card">
+      <h1>LiveTask</h1>
+      <h2>新規登録</h2>
+      <div th:if="${error}" class="error-message" th:text="${error}"></div>
+      <form th:action="@{/register}" method="post" th:object="${user}">
+        <input type="text" th:field="*{username}" placeholder="ユーザー名" required>
+        <input type="email" th:field="*{email}" placeholder="メールアドレス" required>
+        <input type="password" th:field="*{password}" placeholder="パスワード" required>
+        <button type="submit">登録</button>
+        <p class="link"><a th:href="@{/login}">ログインへ戻る</a></p>
+      </form>
+    </div>
   </div>
 </body>
 </html>
