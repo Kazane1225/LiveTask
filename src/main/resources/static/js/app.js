@@ -130,7 +130,7 @@ new Sortable(document.getElementById('completedTasks'), {
 });
 
 // カレンダーUI
-flatpickr("input[type='date']", {
+flatpickr("input[name='dueDate']", {
   dateFormat: 'Y-m-d',
   locale: 'ja',
   clickOpens: true,
