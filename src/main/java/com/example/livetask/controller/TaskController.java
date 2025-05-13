@@ -85,12 +85,25 @@ public class TaskController {
         return ResponseEntity.ok(saved);
     }
 
-
-
     @PostMapping("/delete/{id}")
-    public String deleteTask(@PathVariable Long id) {
-        taskRepository.deleteById(id);
-        return "redirect:/";
+    @ResponseBody
+    public ResponseEntity<?> deleteTask(@PathVariable Long id, Principal principal) {
+        if (principal == null) return ResponseEntity.status(401).build();
+
+        Optional<Task> taskOpt = taskRepository.findById(id);
+        if (taskOpt.isEmpty()) return ResponseEntity.notFound().build();
+
+        Task task = taskOpt.get();
+        String username = principal.getName();
+        User user = userRepository.findByUsername(username).orElseThrow();
+
+        // 所有者確認
+        if (!task.getUser().getId().equals(user.getId())) {
+            return ResponseEntity.status(403).build();
+        }
+
+        taskRepository.delete(task);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/toggle/{id}")

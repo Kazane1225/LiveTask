@@ -32,7 +32,6 @@ function addTaskToDOM(task) {
   const taskDiv = clone.querySelector('.task');
 
   taskDiv.dataset.id = task.id;
-  taskDiv.dataset.user = task.user;
   taskDiv.classList.toggle('completed', task.completed);
 
   clone.querySelector('.title').textContent = task.title;
@@ -52,9 +51,25 @@ function addTaskToDOM(task) {
 
 // タスク削除
 async function deleteTask(id) {
-  if (window.confirm('タスクを削除しますか？')) {
-    await fetch(`/delete/${id}`, { method: 'POST' });
-    document.querySelector(`.task[data-id="${id}"]`)?.remove();
+  if (!window.confirm('タスクを削除しますか？')) return;
+
+  const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+  const response = await fetch(`/delete/${id}`, {
+    method: 'POST',
+    headers: {
+      [csrfHeader]: csrfToken
+    }
+  });
+
+  console.log('削除レスポンス:', response.status);
+
+  if (response.ok) {
+    const el = document.querySelector(`.task[data-id="${id}"]`);
+    if (el) el.remove();
+  } else {
+    alert('削除に失敗しました。');
   }
 }
 
@@ -81,12 +96,6 @@ async function toggleTask(id) {
     : document.getElementById('inProgressTasks');
 
   targetList.appendChild(task);
-}
-
-// ドラッグ時の見た目
-function onDragOver(event) {
-  event.preventDefault();
-  event.currentTarget.classList.add('dragover');
 }
 
 // ドラッグ後の処理共通化
@@ -141,15 +150,18 @@ flatpickr("input[name='dueDate']", {
 // ボタン操作のイベント委任
 document.addEventListener('DOMContentLoaded', () => {
   const setupDynamicListeners = (container) => {
-    container.addEventListener('click', (e) => {
+    container.addEventListener('click', async (e) => {
       const task = e.target.closest('.task');
       if (!task) return;
 
       if (e.target.classList.contains('deleteBtn')) {
-        deleteTask(task.dataset.id);
+        e.target.disabled = true; // 二重実行防止
+        await deleteTask(task.dataset.id);
+        e.target.disabled = false;
       }
+
       if (e.target.classList.contains('toggleBtn')) {
-        toggleTask(task.dataset.id);
+        await toggleTask(task.dataset.id);
       }
     });
   };
