@@ -100,6 +100,7 @@ h1 {
   background-color: #e9f3ff;
   box-shadow: 1px 1px 3px rgba(0, 100, 200, 0.1);
   transition: background-color 0.3s ease, transform 0.2s ease;
+  animation: fadeSlideIn 0.3s ease-out;
 }
 
 .task:hover {
@@ -115,6 +116,24 @@ h1 {
   background-color: #f3f3f3;
   text-decoration: line-through;
   color: #999;
+}
+
+.task.completed .title {
+  position: relative;
+  display: inline-block;
+}
+
+.task.completed .title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 2px;
+  background: #999;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: lineThrough 0.3s forwards;
 }
 
 .task button {
@@ -197,11 +216,48 @@ select:focus {
   box-shadow: 0 0 4px rgba(74, 144, 226, 0.6);
 }
 
+.priority::before {
+  content: attr(data-priority);
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 15px;
+  font-size: 12px;
+  color: white;
+  margin-right: 6px;
+}
+
+.priority[data-priority="高"]::before {
+  background-color: #3206f7;
+}
+.priority[data-priority="中"]::before {
+  background-color: #4e74c5;
+}
+.priority[data-priority="低"]::before {
+  background-color: #7cbcf1;
+}
+
 .error-messages {
   color: #e03131;
   margin: 10px 0;
   font-size: 16px;
   font-weight: 500;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lineThrough {
+  to {
+    transform: scaleX(1);
+  }
 }
 
 /* モバイル対応 */

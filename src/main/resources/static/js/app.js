@@ -34,11 +34,17 @@ function addTaskToDOM(task) {
   taskDiv.dataset.id = task.id;
   taskDiv.classList.toggle('completed', task.completed);
 
-  clone.querySelector('.title').textContent = task.title;
-  clone.querySelector('.dueDate').textContent = task.dueDate ?? 'なし';
+  const titleEl = clone.querySelector('.title');
+  const dueDateEl = clone.querySelector('.dueDate');
+  const priorityEl = clone.querySelector('.priority');
+
+  if (!titleEl || !dueDateEl || !priorityEl) return;
+
+  titleEl.textContent = task.title;
+  dueDateEl.textContent = task.dueDate ?? 'なし';
 
   const priorityText = task.priority === 1 ? '高' : task.priority === 2 ? '中' : '低';
-  clone.querySelector('.priority').textContent = priorityText;
+  priorityEl.setAttribute('data-priority', priorityText);
 
   taskDiv.setAttribute('draggable', 'true');
 

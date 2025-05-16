@@ -46,7 +46,8 @@
             <span>期限:</span>
             <span class="dueDate" th:text="${task.dueDate != null ? #temporals.format(task.dueDate, 'yyyy/MM/dd') : 'なし'}"></span>
             <span>優先度:</span>
-            <span class="priority" th:text="${task.priority == 1 ? '高' : task.priority == 2 ? '中' : '低'}"></span>
+            <span class="priority" 
+            th:attr="data-priority=${task.priority == 1 ? '高' : task.priority == 2 ? '中' : '低'}"></span>
             <div id="task-buttons">
               <button type="button" class="deleteBtn">削除</button>
               <button type="button" class="toggleBtn">完了</button>
@@ -67,7 +68,8 @@
             <span>期限:</span>
             <span class="dueDate" th:text="${task.dueDate != null ? #temporals.format(task.dueDate, 'yyyy/MM/dd') : 'なし'}"></span>
             <span>優先度:</span>
-            <span class="priority" th:text="${task.priority == 1 ? '高' : task.priority == 2 ? '中' : '低'}"></span>
+            <span class="priority"
+            th:attr="data-priority=${task.priority == 1 ? '高' : task.priority == 2 ? '中' : '低'}"></span>
             <div id="task-buttons">
               <button type="button" class="deleteBtn">削除</button>
               <button type="button" class="toggleBtn">進行中</button>

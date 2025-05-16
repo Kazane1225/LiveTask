@@ -10,7 +10,7 @@
 <body>
   <div class="auth-container">
     <div class="auth-card">
-      <h1>LiveTask</h1>
+      <h1 class="slide-in">LiveTask</h1>
       <form th:action="@{/login}" method="post" class="auth-form">
         <h2>ログイン</h2>
         <div th:if="${param.error}" class="error-message">ユーザー名またはパスワードが間違っています。</div>
