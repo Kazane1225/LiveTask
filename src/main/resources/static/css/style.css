@@ -216,6 +216,13 @@ select:focus {
   box-shadow: 0 0 4px rgba(74, 144, 226, 0.6);
 }
 
+.priority-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
 .priority::before {
   content: attr(data-priority);
   display: inline-block;
@@ -224,6 +231,7 @@ select:focus {
   font-size: 12px;
   color: white;
   margin-right: 6px;
+  white-space: nowrap;
 }
 
 .priority {
