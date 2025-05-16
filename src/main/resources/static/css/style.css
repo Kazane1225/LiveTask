@@ -226,6 +226,12 @@ select:focus {
   margin-right: 6px;
 }
 
+.priority {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+}
+
 .priority[data-priority="高"]::before {
   background-color: #3206f7;
 }
