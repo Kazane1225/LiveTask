@@ -8,6 +8,7 @@ import com.example.livetask.repository.UserRepository;
 import jakarta.validation.Valid;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -119,5 +121,22 @@ public class TaskController {
         result.put("title", task.getTitle());
         result.put("priority", task.getPriority());
         return result;
+    }
+
+    @PostMapping("/tasks/sort")
+    @ResponseBody
+    public List<Task> sortTasks(@RequestBody Map<String, List<String>> body, Principal principal) {
+        if(principal == null) return List.of();
+        String username = principal.getName();
+        User user = userRepository.findByUsername(username).orElseThrow();
+        List<String> tags = body.get("tags");
+        Sort sort = Sort.unsorted();
+        if(tags != null && !tags.isEmpty()) {
+            List<Sort.Order> orders = new ArrayList<>();
+            if(tags.contains("priority")) orders.add(Sort.Order.asc("priority"));
+            if(tags.contains("dueDate")) orders.add(Sort.Order.asc("dueDate"));
+            sort = Sort.by(orders);
+        }
+        return taskRepository.findByUser(user, sort);
     }
 }

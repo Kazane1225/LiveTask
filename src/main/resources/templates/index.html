@@ -35,6 +35,17 @@
     <div class="task-columns">
       <div class="task-section">
         <h2>進行中</h2>
+        <form class="task-checkboxes" th:action="@{/tasks/sort}" method="post">
+          <label>
+            <span id="checkboxes-sort">ソート</span>
+          </label>
+          <label>
+            <input type="checkbox" name="tags" value="priority"> 優先度
+          </label>
+          <label>
+            <input type="checkbox" name="tags" value="dueDate"> 期限
+          </label>
+        </form>
         <div id="inProgressTasks" class="taskList">
           <div th:each="task : ${tasks}" 
                th:if="!${task.completed}"
@@ -60,6 +71,11 @@
 
       <div class="task-section">
         <h2>完了</h2>
+        <div class="task-checkboxes dummy">
+          <label><span>ソート</span></label>
+          <label><input type="checkbox"> 優先度</label>
+          <label><input type="checkbox"> 期限</label>
+        </div>
         <div id="completedTasks" class="taskList">
           <div th:each="task : ${tasks}"
                th:if="${task.completed}"

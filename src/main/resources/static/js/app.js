@@ -128,6 +128,35 @@ async function handleTaskDropToggle(evt) {
   toggleBtn.textContent = updated.completed ? '進行中' : '完了';
 }
 
+function updateTaskLists(tasks) {
+  const inProgress = document.getElementById('inProgressTasks');
+  const completed = document.getElementById('completedTasks');
+  inProgress.innerHTML = '';
+  completed.innerHTML = '';
+
+  tasks.forEach(task => {
+    const template = document.getElementById('taskTemplate');
+    const clone = template.content.cloneNode(true);
+    const taskDiv = clone.querySelector('.task');
+
+    taskDiv.dataset.id = task.id;
+    taskDiv.classList.toggle('completed', task.completed);
+    clone.querySelector('.title').textContent = task.title;
+    clone.querySelector('.dueDate').textContent = task.dueDate ?? 'なし';
+
+    const priorityText = task.priority === 1 ? '高' : task.priority === 2 ? '中' : '低';
+    const priorityEl = clone.querySelector('.priority');
+    priorityEl.setAttribute('data-priority', priorityText);
+    priorityEl.textContent = '';
+
+    if (task.completed) {
+      completed.appendChild(clone);
+    } else {
+      inProgress.appendChild(clone);
+    }
+  });
+}
+
 // Sortable.js 初期化
 new Sortable(document.getElementById('inProgressTasks'), {
   group: 'tasks',
@@ -173,8 +202,32 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target.classList.contains('toggleBtn')) {
         await toggleTask(task.dataset.id);
       }
+
+      if (e.target.classList.contains('task-checkboxes')) {
+        await taskCheckBoxes(task.dataset.id);
+      }
     });
   };
+
+  document.querySelectorAll('.task-checkboxes').forEach(form => {
+    form.addEventListener('change', async (e) => {
+      const formData = new FormData(form);
+      const tags = formData.getAll('tags');
+
+      const response = await fetch('/tasks/sort', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          [document.querySelector('meta[name="_csrf_header"]').content]:
+            document.querySelector('meta[name="_csrf"]').content
+        },
+        body: JSON.stringify({tags})
+      });
+
+      const tasks = await response.json();
+      updateTaskLists(tasks);
+    })
+  })
 
   setupDynamicListeners(document.getElementById('inProgressTasks'));
   setupDynamicListeners(document.getElementById('completedTasks'));
