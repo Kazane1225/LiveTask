@@ -39,8 +39,8 @@ public class TaskController {
     }
 
     @GetMapping("/")
-    public String redirectToHome() {
-        return "redirect:/tasks";
+    public String home() {
+        return "home";
     }
 
     @GetMapping("/tasks")
