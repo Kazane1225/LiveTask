@@ -1,33 +1,35 @@
-/* 認証共通スタイル */
+/* 全体背景とフォント */
 body {
   font-family: "Segoe UI", sans-serif;
   background: linear-gradient(135deg, #cce0ff, #e8f2ff);
+  margin: 0;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
-  overflow: hidden;
 }
 
+/* 中央コンテナ */
 .auth-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: block;
   width: 100%;
   padding: 20px;
+  box-sizing: border-box;
 }
 
+/* カード本体：幅が画面に応じて変化 */
 .auth-card {
   background-color: white;
   padding: 40px;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 80, 180, 0.2);
+  margin: 0 auto;
   width: 100%;
-  max-width: 420px;
+  max-width: clamp(360px, 80vw, 1000px);
   animation: fadeInUp 0.5s ease;
 }
 
+/* タイトル */
 .auth-card h1 {
   font-family: 'Zen Kaku Gothic New', sans-serif;
   font-size: 2.8rem;
@@ -38,6 +40,7 @@ body {
   margin-bottom: 20px;
 }
 
+/* 見出し */
 .auth-card h2 {
   margin-bottom: 24px;
   color: #1f4e79;
@@ -45,19 +48,19 @@ body {
   text-align: center;
   position: relative;
 }
-
 .auth-card h2::after {
   content: "";
   display: block;
   height: 2px;
   width: 40px;
   background-color: #4a90e2;
-  margin: 8px auto 0 auto;
+  margin: 8px auto 0;
   border-radius: 2px;
 }
 
+/* 入力フォーム */
 .auth-card input {
-  width: 93%;
+  width: 96.1%;
   padding: 14px;
   margin-bottom: 16px;
   border: 1px solid #aacbe2;
@@ -66,13 +69,13 @@ body {
   background-color: #f5faff;
   transition: border-color 0.2s;
 }
-
 .auth-card input:focus {
   border-color: #4a90e2;
   outline: none;
   box-shadow: 0 0 4px rgba(74, 144, 226, 0.5);
 }
 
+/* ボタン */
 .auth-card button {
   width: 100%;
   padding: 14px;
@@ -85,27 +88,26 @@ body {
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
-
 .auth-card button:hover {
   background-color: #155fcf;
   transform: translateY(-1px);
 }
 
+/* リンク */
 .auth-card .link {
   margin-top: 16px;
   text-align: center;
   font-size: 14px;
 }
-
 .auth-card .link a {
   color: #1f75fe;
   text-decoration: none;
 }
-
 .auth-card .link a:hover {
   text-decoration: underline;
 }
 
+/* メッセージ */
 .success-message,
 .error-message {
   margin: 10px 0;
@@ -115,32 +117,29 @@ body {
   padding: 10px;
   border-radius: 6px;
 }
-
 .success-message {
   background-color: #e0f2ff;
   color: #0565ff;
   border: 1px solid #81c4ff;
 }
-
 .error-message {
   background-color: #ffe8e8;
   color: #e03131;
   border: 1px solid #ff9090;
 }
 
+/* アニメーション */
 .slide-in {
   opacity: 0;
   transform: translateX(-50px);
   animation: slideIn 0.8s ease-out forwards;
 }
-
 @keyframes slideIn {
   to {
     opacity: 1;
     transform: translateX(0);
   }
 }
-
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -152,15 +151,14 @@ body {
   }
 }
 
+/* モバイル対応 */
 @media (max-width: 480px) {
   .auth-card {
     padding: 30px 20px;
   }
-
   .auth-card h1 {
     font-size: 2.2rem;
   }
-
   .auth-card input,
   .auth-card button {
     font-size: 15px;

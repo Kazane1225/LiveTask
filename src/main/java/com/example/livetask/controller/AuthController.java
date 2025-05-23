@@ -51,4 +51,9 @@ public class AuthController {
         userRepository.save(user);
         return "redirect:/login?registered";
     }
+
+    @GetMapping("/privacy")
+    public String privacy() {
+        return "privacy";
+    }
 }
