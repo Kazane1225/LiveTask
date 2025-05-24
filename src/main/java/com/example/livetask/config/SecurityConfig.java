@@ -29,6 +29,10 @@ public class SecurityConfig {
             .logout(logout -> logout
                 .logoutSuccessUrl("/login?logout") // ログアウト後の遷移先
                 .permitAll()
+            )
+            .rememberMe(remember -> remember
+                .key("uniqueAndSecret")
+                .tokenValiditySeconds(1209600) // 2週間（秒）
             );
 
         return http.build();

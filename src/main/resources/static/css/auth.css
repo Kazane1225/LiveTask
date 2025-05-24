@@ -69,10 +69,30 @@ body {
   background-color: #f5faff;
   transition: border-color 0.2s;
 }
+
 .auth-card input:focus {
   border-color: #4a90e2;
   outline: none;
   box-shadow: 0 0 4px rgba(74, 144, 226, 0.5);
+}
+
+.checkbox-container {
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #333;
+}
+
+.checkbox-container label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.checkbox-container input[type="checkbox"] {
+  margin: 0;
+  transform: scale(1.1);
+  accent-color: #1f75fe;
 }
 
 /* ボタン */
@@ -159,7 +179,11 @@ body {
   .auth-card h1 {
     font-size: 2.2rem;
   }
-  .auth-card input,
+  .auth-card input {
+    font-size: 15px;
+    padding: 12px;
+    width: 96.1%;
+  }
   .auth-card button {
     font-size: 15px;
     padding: 12px;
