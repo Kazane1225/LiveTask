@@ -341,6 +341,10 @@ select:focus {
   #taskForm button {
     width: 100%;
   }
+
+  .task-checkboxes.dummy {
+    display: none;
+  }
 }
 
 @media (min-width: 1600px) {
