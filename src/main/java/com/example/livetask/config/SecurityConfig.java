@@ -22,7 +22,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                .loginPage("/login")               // 独自のlogin.htmlを使用
+                .loginPage("/login")
                 .defaultSuccessUrl("/tasks", true)      // ログイン後のリダイレクト先
                 .permitAll()
             )
