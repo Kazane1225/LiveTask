@@ -281,13 +281,13 @@ select:focus {
   margin-left: 8px;
 }
 
-.priority[data-priority="高"]::before {
+.priority[data-priority="High"]::before {
   background-color: #3206f7;
 }
-.priority[data-priority="中"]::before {
+.priority[data-priority="Medium"]::before {
   background-color: #4e74c5;
 }
-.priority[data-priority="低"]::before {
+.priority[data-priority="Low"]::before {
   background-color: #7cbcf1;
 }
 

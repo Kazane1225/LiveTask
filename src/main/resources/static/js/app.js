@@ -41,9 +41,9 @@ function addTaskToDOM(task) {
   if (!titleEl || !dueDateEl || !priorityEl) return;
 
   titleEl.textContent = task.title;
-  dueDateEl.textContent = task.dueDate ?? 'なし';
+  dueDateEl.textContent = task.dueDate ?? 'None';
 
-  const priorityText = task.priority === 1 ? '高' : task.priority === 2 ? '中' : '低';
+  const priorityText = task.priority === 1 ? 'High' : task.priority === 2 ? 'Medium' : 'Low';
   priorityEl.setAttribute('data-priority', priorityText);
 
   taskDiv.setAttribute('draggable', 'true');
@@ -57,7 +57,7 @@ function addTaskToDOM(task) {
 
 // タスク削除
 async function deleteTask(id) {
-  if (!window.confirm('タスクを削除しますか？')) return;
+  if (!window.confirm('Are you sure you want to delete this task?')) return;
 
   const csrfToken = document.querySelector('meta[name="_csrf"]').content;
   const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
@@ -75,7 +75,7 @@ async function deleteTask(id) {
     const el = document.querySelector(`.task[data-id="${id}"]`);
     if (el) el.remove();
   } else {
-    alert('削除に失敗しました。');
+    alert('Failed to delete the task.');
   }
 }
 
@@ -95,7 +95,7 @@ async function toggleTask(id) {
 
   task.classList.toggle('completed', updatedTask.completed);
   const toggleBtn = task.querySelector('.toggleBtn');
-  toggleBtn.textContent = updatedTask.completed ? '進行中' : '完了';
+  toggleBtn.textContent = updatedTask.completed ? 'In Progress' : 'Done';
 
   const targetList = updatedTask.completed
     ? document.getElementById('completedTasks')
@@ -125,7 +125,7 @@ async function handleTaskDropToggle(evt) {
   task.classList.toggle('completed', updated.completed);
 
   const toggleBtn = task.querySelector('.toggleBtn');
-  toggleBtn.textContent = updated.completed ? '進行中' : '完了';
+  toggleBtn.textContent = updated.completed ? 'In Progress' : 'Done';
 }
 
 function updateTaskLists(tasks) {
@@ -142,9 +142,9 @@ function updateTaskLists(tasks) {
     taskDiv.dataset.id = task.id;
     taskDiv.classList.toggle('completed', task.completed);
     clone.querySelector('.title').textContent = task.title;
-    clone.querySelector('.dueDate').textContent = task.dueDate ?? 'なし';
+    clone.querySelector('.dueDate').textContent = task.dueDate ?? 'None';
 
-    const priorityText = task.priority === 1 ? '高' : task.priority === 2 ? '中' : '低';
+    const priorityText = task.priority === 1 ? 'High' : task.priority === 2 ? 'Medium' : 'Low';
     const priorityEl = clone.querySelector('.priority');
     priorityEl.setAttribute('data-priority', priorityText);
     priorityEl.textContent = '';

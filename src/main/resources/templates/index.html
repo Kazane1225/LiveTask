@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <meta name="description" content="LiveTaskは、誰でもすぐに使えるシンプルなタスク管理アプリ。無料で、仕事や学習を効率化できます。PC・スマホ対応。">
+  <meta name="description" content="LiveTask is a simple and free task management app. No sign-up required. Organize your work or study efficiently on PC and mobile.">
   <meta name="robots" content="index, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="_csrf" th:content="${_csrf.token}">
@@ -19,36 +19,36 @@
 </head>
 <body>
   <div class="container">
-    <h1>現在のタスク一覧</h1>
+    <h1>Current Tasks</h1>
 
-    <!-- タスク追加フォーム -->
+    <!-- Task Add Form -->
     <div id="formErrors" class="error-messages"></div>
     <form id="taskForm" th:action="@{/add}" method="post">
-      <input type="text" name="title" placeholder="タスク名">
-      <input type="text" name="dueDate" placeholder="期限: 年/ 月 /日" autocomplete="off">
-      <label for="priority">優先度</label>
+      <input type="text" name="title" placeholder="Task Title">
+      <input type="text" name="dueDate" placeholder="Due Date: YYYY/MM/DD" autocomplete="off">
+      <label for="priority">Priority</label>
       <select name="priority" id="priority">
         <option value="" disabled selected>--------</option>
-        <option value="1">高</option>
-        <option value="2">中</option>
-        <option value="3">低</option>
+        <option value="1">High</option>
+        <option value="2">Medium</option>
+        <option value="3">Low</option>
       </select>
-      <button type="submit">追加</button>
+      <button type="submit">Add</button>
     </form>
 
-    <!-- タスク一覧 -->
+    <!-- Task Lists -->
     <div class="task-columns">
       <div class="task-section">
-        <h2>進行中</h2>
+        <h2>In Progress</h2>
         <form class="task-checkboxes" th:action="@{/tasks/sort}" method="post">
           <label>
-            <span id="checkboxes-sort">ソート</span>
+            <span id="checkboxes-sort">Sort by</span>
           </label>
           <label>
-            <input type="checkbox" name="tags" value="priority"> 優先度
+            <input type="checkbox" name="tags" value="priority"> Priority
           </label>
           <label>
-            <input type="checkbox" name="tags" value="dueDate"> 期限
+            <input type="checkbox" name="tags" value="dueDate"> Due Date
           </label>
         </form>
         <div id="inProgressTasks" class="taskList">
@@ -59,27 +59,27 @@
                draggable="true"
                th:classappend="${task.completed} ? 'completed'">
             <span class="title" th:text="${task.title}"></span>
-            <span>期限:</span>
-            <span class="dueDate" th:text="${task.dueDate != null ? #temporals.format(task.dueDate, 'yyyy/MM/dd') : 'なし'}"></span>
+            <span>Due:</span>
+            <span class="dueDate" th:text="${task.dueDate != null ? #temporals.format(task.dueDate, 'yyyy/MM/dd') : 'None'}"></span>
             
-            <span class="priority-container">優先度:
+            <span class="priority-container">Priority:
               <span class="priority" 
-              th:attr="data-priority=${task.priority == 1 ? '高' : task.priority == 2 ? '中' : '低'}"></span>
+              th:attr="data-priority=${task.priority == 1 ? 'High' : task.priority == 2 ? 'Medium' : 'Low'}"></span>
             </span>
             <div id="task-buttons">
-              <button type="button" class="deleteBtn">削除</button>
-              <button type="button" class="toggleBtn">完了</button>
+              <button type="button" class="deleteBtn">Delete</button>
+              <button type="button" class="toggleBtn">Done</button>
             </div>
           </div>
         </div>
       </div>
 
       <div class="task-section">
-        <h2>完了</h2>
+        <h2>Completed</h2>
         <div class="task-checkboxes dummy">
-          <label><span>ソート</span></label>
-          <label><input type="checkbox"> 優先度</label>
-          <label><input type="checkbox"> 期限</label>
+          <label><span>Sort by</span></label>
+          <label><input type="checkbox"> Priority</label>
+          <label><input type="checkbox"> Due Date</label>
         </div>
         <div id="completedTasks" class="taskList">
           <div th:each="task : ${tasks}"
@@ -88,33 +88,33 @@
                class="task completed"
                draggable="true">
             <span class="title" th:text="${task.title}"></span>
-            <span>期限:</span>
-            <span class="dueDate" th:text="${task.dueDate != null ? #temporals.format(task.dueDate, 'yyyy/MM/dd') : 'なし'}"></span>
-            <span class="priority-container">優先度:
+            <span>Due:</span>
+            <span class="dueDate" th:text="${task.dueDate != null ? #temporals.format(task.dueDate, 'yyyy/MM/dd') : 'None'}"></span>
+            <span class="priority-container">Priority:
               <span class="priority" 
-              th:attr="data-priority=${task.priority == 1 ? '高' : task.priority == 2 ? '中' : '低'}"></span>
+              th:attr="data-priority=${task.priority == 1 ? 'High' : task.priority == 2 ? 'Medium' : 'Low'}"></span>
             </span>
             <div id="task-buttons">
-              <button type="button" class="deleteBtn">削除</button>
-              <button type="button" class="toggleBtn">進行中</button>
+              <button type="button" class="deleteBtn">Delete</button>
+              <button type="button" class="toggleBtn">In Progress</button>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- jsで使うテンプレート（非表示） -->
+    <!-- Hidden Task Template for JavaScript -->
     <template id="taskTemplate">
       <div class="task" data-id="">
         <span class="title"></span>
-        <span>期限:</span>
+        <span>Due:</span>
         <span class="dueDate"></span>
-        <span class="priority-container">優先度:
+        <span class="priority-container">Priority:
           <span class="priority"></span>
         </span>
         <div id="task-buttons">
-          <button type="button" class="deleteBtn">削除</button>
-          <button type="button" class="toggleBtn">完了</button>
+          <button type="button" class="deleteBtn">Delete</button>
+          <button type="button" class="toggleBtn">Done</button>
         </div>
       </div>
     </template>
