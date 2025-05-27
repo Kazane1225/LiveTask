@@ -47,8 +47,8 @@ public class TaskController {
     public String taskList(Model model, Principal principal) {
         if (principal == null) return "redirect:/login";
 
-        String username = principal.getName();
-        Optional<User> user = userRepository.findByUsername(username);
+        String email = principal.getName();
+        Optional<User> user = userRepository.findByEmail(email);
         List<Task> tasks = taskRepository.findByUser(user);
         model.addAttribute("tasks", tasks);
         return "index";
@@ -66,8 +66,8 @@ public class TaskController {
             return ResponseEntity.badRequest().body(errors);
         }
 
-        String username = principal.getName();
-        User user = userRepository.findByUsername(username).orElseThrow();
+        String email = principal.getName();
+        User user = userRepository.findByEmail(email).orElseThrow();
         task.setUser(user);  // ★ ユーザーとタスクを紐づけ
 
         task.setCompleted(false);
@@ -96,8 +96,8 @@ public class TaskController {
         if (taskOpt.isEmpty()) return ResponseEntity.notFound().build();
 
         Task task = taskOpt.get();
-        String username = principal.getName();
-        User user = userRepository.findByUsername(username).orElseThrow();
+        String email = principal.getName();
+        User user = userRepository.findByEmail(email).orElseThrow();
 
         // 所有者確認
         if (!task.getUser().getId().equals(user.getId())) {
@@ -127,8 +127,8 @@ public class TaskController {
     @ResponseBody
     public List<Task> sortTasks(@RequestBody Map<String, List<String>> body, Principal principal) {
         if(principal == null) return List.of();
-        String username = principal.getName();
-        User user = userRepository.findByUsername(username).orElseThrow();
+        String email = principal.getName();
+        User user = userRepository.findByEmail(email).orElseThrow();
         List<String> tags = body.get("tags");
         Sort sort = Sort.unsorted();
         if(tags != null && !tags.isEmpty()) {
