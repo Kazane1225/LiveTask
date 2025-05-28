@@ -1,0 +1,50 @@
+/* delete-account.css */
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #fdfefe;
+  border: 1px solid #ddeaf5;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 50, 0.05);
+  text-align: center;
+}
+
+h1 {
+  color: #1f4e79;
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+form button {
+  padding: 10px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #e03131;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+form button:hover {
+  background-color: #c01c1c;
+}
+
+a {
+  display: inline-block;
+  margin-top: 20px;
+  text-decoration: none;
+  color: #1f75fe;
+  font-weight: bold;
+}
+
+a:hover {
+  text-decoration: underline;
+}

@@ -20,6 +20,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -138,5 +139,29 @@ public class TaskController {
             sort = Sort.by(orders);
         }
         return taskRepository.findByUser(user, sort);
+    }
+
+    @GetMapping("/delete-account")
+    public String showDeleteAccountPage(Principal principal, Model model) {
+        if (principal == null) return "redirect:/login";
+        return "delete-account"; // delete-account.html を表示
+    }
+
+    @PostMapping("/delete-account")
+    @Transactional
+    public String deleteAccount(Principal principal) {
+        if (principal == null) return "redirect:/login";
+
+        String email = principal.getName();
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            // 関連タスク削除
+            taskRepository.deleteAllByUser(user);
+            // アカウント削除
+            userRepository.delete(user);
+        }
+
+        return "redirect:/login";
     }
 }

@@ -18,4 +18,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByUser(User user, Sort sort);
 
     boolean existsByTitleAndUser(String title, User user);
+
+    void deleteAllByUser(User user);
 }

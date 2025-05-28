@@ -291,6 +291,33 @@ select:focus {
   background-color: #7cbcf1;
 }
 
+.account-links {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.account-link {
+  margin: 0 10px;
+  color: #1f75fe;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s ease;
+}
+
+.account-link:hover {
+  text-decoration: underline;
+  color: #155fcf;
+}
+
+.account-link.delete {
+  color: #e03131;
+}
+
+.account-link.delete:hover {
+  color: #a60e0e;
+}
+
 .error-messages {
   color: #e03131;
   margin: 10px 0;
