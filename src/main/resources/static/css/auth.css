@@ -201,8 +201,25 @@ body {
 
 /* モバイル対応 */
 @media (max-width: 480px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 12px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
   .auth-card {
-    padding: 30px 20px;
+    padding: 24px 16px;
+    width: 100%;
+    max-width: 360px;
+    box-sizing: border-box;
+    margin: 0 auto;
   }
   .auth-card h1 {
     font-size: 2.2rem;
