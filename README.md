@@ -6,10 +6,8 @@ JavaとJavaScriptを用いて開発した、シンプルなタスク管理アプ
 ---
 
 ## 🌐 公開URL
-
-本アプリは Railway を使用してデプロイしています：  
-👉 [https://livetask-production.up.railway.app](https://livetask-production.up.railway.app)
-
+独自ドメイン獲得!!!
+https://livetask-yowayowaengineer.com/
 ---
 
 ## 🔧 使用技術スタック
