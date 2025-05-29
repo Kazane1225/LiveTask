@@ -161,6 +161,9 @@ function updateTaskLists(tasks) {
 new Sortable(document.getElementById('inProgressTasks'), {
   group: 'tasks',
   animation: 150,
+  delay: 120,
+  delayOnTouchOnly: true,
+  touchStartThreshold: 5,
   onEnd: handleTaskDropToggle,
   filter: '.deleteBtn, .toggleBtn',
   preventOnFilter: false  
@@ -169,7 +172,7 @@ new Sortable(document.getElementById('inProgressTasks'), {
 new Sortable(document.getElementById('completedTasks'), {
   group: 'tasks',
   animation: 150,
-  delay: 150,
+  delay: 120,
   delayOnTouchOnly: true,
   touchStartThreshold: 5,
   onEnd: handleTaskDropToggle,
