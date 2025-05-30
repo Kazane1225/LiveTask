@@ -164,26 +164,13 @@ async function handleTaskDropToggle(evt) {
   const to = evt.to.id;
   if (from === to) return;
 
-  const csrfToken = document.querySelector('meta[name="_csrf"]').content;
-  const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
-
-  const response = await fetch(`/toggle/${id}`, {
-    method: 'POST',
-    headers: { [csrfHeader]: csrfToken }
-  });
-  if (!response.ok) return;
-
-  const updated = await response.json();
+  // 先にUI更新
   const task = evt.item;
-  task.classList.toggle('completed', updated.completed);
+  task.classList.toggle('completed');
 
   const toggleBtn = task.querySelector('.toggleBtn');
-  toggleBtn.textContent = updated.completed ? 'In Progress' : 'Done';
-
-  if (updated.completed && updated.message) {
-    console.log("ほめる（ドラッグ）");
-    showPraiseMessage(updated.message);
-  }
+  toggleBtn.textContent = task.classList.contains('completed') ? 'In Progress' : 'Done';
+  fetchToggleAndPraise(id);
 }
 
 function updateTaskLists(tasks) {
