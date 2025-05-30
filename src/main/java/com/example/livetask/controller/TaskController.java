@@ -4,6 +4,7 @@ import com.example.livetask.model.Task;
 import com.example.livetask.model.User;
 import com.example.livetask.repository.TaskRepository;
 import com.example.livetask.repository.UserRepository;
+import com.example.livetask.service.ChatGPTService;
 
 import jakarta.validation.Valid;
 
@@ -33,6 +34,9 @@ public class TaskController {
 
     @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    private ChatGPTService chatGPTService;
 
     public TaskController(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
@@ -121,6 +125,11 @@ public class TaskController {
         result.put("completed", task.isCompleted());
         result.put("title", task.getTitle());
         result.put("priority", task.getPriority());
+        if (task.isCompleted()) {
+            // 褒めメッセージ生成
+            String praise = chatGPTService.generatePraise(task.getTitle());
+            result.put("message", praise);
+        }
         return result;
     }
 

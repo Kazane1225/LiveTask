@@ -134,6 +134,11 @@ async function toggleTask(id) {
     : document.getElementById('inProgressTasks');
 
   targetList.appendChild(task);
+
+  if (updatedTask.completed && updatedTask.message) {
+    showPraiseMessage(updatedTask.message);
+    console.log(updatedTask.message);
+  }
 }
 
 // ドラッグ後の処理共通化
@@ -227,6 +232,14 @@ flatpickr("input[name='dueDate']", {
   defaultMinute: now.getMinutes(),
   minDate: "today"
 });
+
+async function showPraiseMessage(text) {
+  const box = document.createElement('div');
+  box.className = 'praise-message';
+  box.textContent = text;
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 10000);
+}
 
 // ボタン操作のイベント委任
 document.addEventListener('DOMContentLoaded', () => {
