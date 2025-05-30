@@ -1,14 +1,31 @@
-// フォームの非同期送信
 document.getElementById('taskForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const formData = new FormData(e.target);
+  const title = document.querySelector("input[name='title']").value.trim();
+  const dueDateRaw = document.querySelector("input[name='dueDate']").value;
+  const priority = document.querySelector("select[name='priority']").value;
   const errorContainer = document.getElementById('formErrors');
   errorContainer.innerHTML = '';
 
+  const utcISOString = dueDateRaw
+    ? new Date(dueDateRaw).toISOString()
+    : '';
+
+  const params = new URLSearchParams();
+  params.append("title", title);
+  params.append("dueDate", utcISOString);
+  params.append("priority", priority);
+
+  const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
   const response = await fetch('/add', {
     method: 'POST',
-    body: new URLSearchParams(formData)
+    headers: {
+      [csrfHeader]: csrfToken,
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: params
   });
 
   if (response.ok) {
@@ -24,6 +41,7 @@ document.getElementById('taskForm').addEventListener('submit', async (e) => {
     }
   }
 });
+
 
 // タスクをDOMに追加
 function addTaskToDOM(task) {
@@ -41,7 +59,7 @@ function addTaskToDOM(task) {
   if (!titleEl || !dueDateEl || !priorityEl) return;
 
   titleEl.textContent = task.title;
-  dueDateEl.textContent = task.dueDate ?? 'None';
+  dueDateEl.textContent = task.dueDate ? formatDueDate(task.dueDate) : 'None';
 
   const priorityText = task.priority === 1 ? 'High' : task.priority === 2 ? 'Medium' : 'Low';
   priorityEl.setAttribute('data-priority', priorityText);
@@ -53,6 +71,20 @@ function addTaskToDOM(task) {
     : document.getElementById('inProgressTasks');
 
   targetList.appendChild(clone);
+}
+
+function formatDueDate(raw) {
+  if (!raw) return 'None';
+  const date = new Date(raw); // UTC→ローカル自動変換
+
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
 }
 
 // タスク削除
@@ -142,7 +174,7 @@ function updateTaskLists(tasks) {
     taskDiv.dataset.id = task.id;
     taskDiv.classList.toggle('completed', task.completed);
     clone.querySelector('.title').textContent = task.title;
-    clone.querySelector('.dueDate').textContent = task.dueDate ?? 'None';
+    clone.querySelector('.dueDate').textContent = task.dueDate ? formatDueDate(task.dueDate) : 'None';
 
     const priorityText = task.priority === 1 ? 'High' : task.priority === 2 ? 'Medium' : 'Low';
     const priorityEl = clone.querySelector('.priority');
@@ -180,17 +212,30 @@ new Sortable(document.getElementById('completedTasks'), {
   preventOnFilter: false  
 });
 
+const now = new Date();
 // カレンダーUI
 flatpickr("input[name='dueDate']", {
-  dateFormat: 'Y-m-d',
-  locale: 'ja',
+  dateFormat: "m/d/Y h:i K",
+  locale: 'en',
   clickOpens: true,
   allowInput: true,
-  disableMobile: true
+  disableMobile: true,
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: null,
+  defaultHour: now.getHours(),
+  defaultMinute: now.getMinutes(),
+  minDate: "today"
 });
 
 // ボタン操作のイベント委任
 document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.dueDate').forEach(el => {
+    if (el.textContent.includes('T')) {
+      const raw = el.textContent.trim();
+      el.textContent = formatDueDate(raw);
+    }
+  })
   const setupDynamicListeners = (container) => {
     container.addEventListener('click', async (e) => {
       const task = e.target.closest('.task');

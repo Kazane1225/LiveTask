@@ -1,6 +1,8 @@
 package com.example.livetask.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -24,8 +26,8 @@ public class Task {
     @JsonBackReference
     private User user;
     @Column(name = "due_date", nullable = true)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dueDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private OffsetDateTime dueDate;
     @Column(name = "priority", nullable = true)
     private Integer priority;
     @Column(name = "completed", nullable = false)
@@ -35,7 +37,7 @@ public class Task {
     public Task() {}
 
     // All-args constructor
-    public Task(Long id, String title, User user, LocalDate due_date, Integer priority, boolean completed) {
+    public Task(Long id, String title, User user, OffsetDateTime due_date, Integer priority, boolean completed) {
         this.id = id;
         this.title = title;
         this.user = user;
@@ -67,10 +69,10 @@ public class Task {
         this.user = user;
     }
 
-    public LocalDate getDueDate() { 
+    public OffsetDateTime getDueDate() { 
         return dueDate; 
     }
-    public void setDueDate(LocalDate due_date) { 
+    public void setDueDate(OffsetDateTime due_date) { 
         this.dueDate = due_date; 
     }
 

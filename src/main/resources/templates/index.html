@@ -31,7 +31,7 @@
     <div id="formErrors" class="error-messages"></div>
     <form id="taskForm" th:action="@{/add}" method="post">
       <input type="text" name="title" placeholder="Task Title">
-      <input type="text" name="dueDate" placeholder="Due Date: YYYY/MM/DD" autocomplete="off">
+      <input type="text" name="dueDate" placeholder="Due: YYYY/MM/DD HH:mm" autocomplete="off">
       <label for="priority">Priority</label>
       <select name="priority" id="priority">
         <option value="" disabled selected>--------</option>
@@ -54,7 +54,7 @@
             <input type="checkbox" name="tags" value="priority"> Priority
           </label>
           <label>
-            <input type="checkbox" name="tags" value="dueDate"> Due Date
+            <input type="checkbox" name="tags" value="dueDate"> Due Date Time
           </label>
         </form>
         <div id="inProgressTasks" class="taskList">
@@ -66,8 +66,7 @@
                th:classappend="${task.completed} ? 'completed'">
             <span class="title" th:text="${task.title}"></span>
             <span>Due:</span>
-            <span class="dueDate" th:text="${task.dueDate != null ? #temporals.format(task.dueDate, 'yyyy/MM/dd') : 'None'}"></span>
-            
+            <span class="dueDate" th:text="${task.dueDate}"></span>
             <span class="priority-container">Priority:
               <span class="priority" 
               th:attr="data-priority=${task.priority == 1 ? 'High' : task.priority == 2 ? 'Medium' : 'Low'}"></span>
@@ -85,7 +84,7 @@
         <div class="task-checkboxes dummy">
           <label><span>Sort by</span></label>
           <label><input type="checkbox"> Priority</label>
-          <label><input type="checkbox"> Due Date</label>
+          <label><input type="checkbox"> Due Date Time</label>
         </div>
         <div id="completedTasks" class="taskList">
           <div th:each="task : ${tasks}"
@@ -95,7 +94,7 @@
                draggable="true">
             <span class="title" th:text="${task.title}"></span>
             <span>Due:</span>
-            <span class="dueDate" th:text="${task.dueDate != null ? #temporals.format(task.dueDate, 'yyyy/MM/dd') : 'None'}"></span>
+            <span class="dueDate" th:text="${task.dueDate}"></span>
             <span class="priority-container">Priority:
               <span class="priority" 
               th:attr="data-priority=${task.priority == 1 ? 'High' : task.priority == 2 ? 'Medium' : 'Low'}"></span>
