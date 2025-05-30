@@ -113,31 +113,47 @@ async function deleteTask(id) {
 
 // タスクの状態切り替え
 async function toggleTask(id) {
-  const csrfToken = document.querySelector('meta[name="_csrf"]').content;
-  const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
-
-  const response = await fetch(`/toggle/${id}`, {
-    method: 'POST',
-    headers: { [csrfHeader]: csrfToken }
-  });
-  if (!response.ok) return;
-
-  const updatedTask = await response.json();
   const task = document.querySelector(`.task[data-id="${id}"]`);
+  if (!task) return;
 
-  task.classList.toggle('completed', updatedTask.completed);
+  // ✅ 先に見た目だけ切り替え
+  const isNowCompleted = !task.classList.contains('completed');
+  task.classList.toggle('completed', isNowCompleted);
+
   const toggleBtn = task.querySelector('.toggleBtn');
-  toggleBtn.textContent = updatedTask.completed ? 'In Progress' : 'Done';
+  toggleBtn.textContent = isNowCompleted ? 'In Progress' : 'Done';
 
-  const targetList = updatedTask.completed
+  const targetList = isNowCompleted
     ? document.getElementById('completedTasks')
     : document.getElementById('inProgressTasks');
 
   targetList.appendChild(task);
 
-  if (updatedTask.completed && updatedTask.message) {
-    showPraiseMessage(updatedTask.message);
-    console.log(updatedTask.message);
+  // ChatGPTメッセージなどは後から
+  fetchToggleAndPraise(id);
+}
+
+async function fetchToggleAndPraise(id) {
+  const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+  try {
+    const response = await fetch(`/toggle/${id}`, {
+      method: 'POST',
+      headers: { [csrfHeader]: csrfToken }
+    });
+
+    if (!response.ok) return;
+
+    const updatedTask = await response.json();
+
+    // 🎉 褒め言葉があれば表示
+    if (updatedTask.completed && updatedTask.message) {
+      console.log("ほめる");
+      showPraiseMessage(updatedTask.message);
+    }
+  } catch (err) {
+    console.error('toggle失敗:', err);
   }
 }
 
@@ -163,6 +179,11 @@ async function handleTaskDropToggle(evt) {
 
   const toggleBtn = task.querySelector('.toggleBtn');
   toggleBtn.textContent = updated.completed ? 'In Progress' : 'Done';
+
+  if (updated.completed && updated.message) {
+    console.log("ほめる（ドラッグ）");
+    showPraiseMessage(updated.message);
+  }
 }
 
 function updateTaskLists(tasks) {
@@ -233,14 +254,23 @@ flatpickr("input[name='dueDate']", {
   minDate: "today"
 });
 
-async function showPraiseMessage(text) {
+let praiseMessageDisplayed = false;
+function showPraiseMessage(text) {
+  if (praiseMessageDisplayed) return;
+  praiseMessageDisplayed = true;
+
   const box = document.createElement('div');
   box.className = 'praise-message';
   box.textContent = text;
   document.body.appendChild(box);
-  setTimeout(() => box.remove(), 10000);
+
+  setTimeout(() => {
+    box.remove();
+    praiseMessageDisplayed = false;
+  }, 10000);
 }
 
+let listenersInitialized = false;
 // ボタン操作のイベント委任
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.dueDate span').forEach(el => {
@@ -290,6 +320,9 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
-  setupDynamicListeners(document.getElementById('inProgressTasks'));
-  setupDynamicListeners(document.getElementById('completedTasks'));
+  if (!listenersInitialized) {
+    setupDynamicListeners(document.getElementById('inProgressTasks'));
+    setupDynamicListeners(document.getElementById('completedTasks'));
+    listenersInitialized = true;
+  }
 });

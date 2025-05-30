@@ -117,6 +117,7 @@ public class TaskController {
     @ResponseBody
     public Map<String, Object> toggleTask(@PathVariable Long id) {
         Task task = taskRepository.findById(id).orElseThrow();
+        boolean wasAlreadyCompleted = task.isCompleted();
         task.setCompleted(!task.isCompleted());
         taskRepository.save(task);
 
@@ -125,7 +126,7 @@ public class TaskController {
         result.put("completed", task.isCompleted());
         result.put("title", task.getTitle());
         result.put("priority", task.getPriority());
-        if (task.isCompleted()) {
+        if (!wasAlreadyCompleted && task.isCompleted()) {
             // 褒めメッセージ生成
             String praise = chatGPTService.generatePraise(task.getTitle());
             result.put("message", praise);

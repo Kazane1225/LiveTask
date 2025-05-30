@@ -77,14 +77,14 @@ h1 {
 }
 
 /* ボタンエリア */
-#task-buttons {
+.task-buttons {
   display: flex;
   gap: 50px;
   margin-right: auto;
   margin-top: 8px;
 }
 
-#task-buttons button {
+.task-buttons button {
   flex-shrink: 0;
 }
 
@@ -344,7 +344,7 @@ select:focus {
   font-size: 1.2rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   z-index: 9999;
-  animation: fadeInOut 7s ease-out;
+  animation: fadeInOut 11s ease-out;
 }
 
 @keyframes fadeInOut {
