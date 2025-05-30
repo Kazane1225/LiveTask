@@ -53,7 +53,7 @@ function addTaskToDOM(task) {
   taskDiv.classList.toggle('completed', task.completed);
 
   const titleEl = clone.querySelector('.title');
-  const dueDateEl = clone.querySelector('.dueDate');
+  const dueDateEl = clone.querySelector('.dueDate span');
   const priorityEl = clone.querySelector('.priority');
 
   if (!titleEl || !dueDateEl || !priorityEl) return;
@@ -174,7 +174,7 @@ function updateTaskLists(tasks) {
     taskDiv.dataset.id = task.id;
     taskDiv.classList.toggle('completed', task.completed);
     clone.querySelector('.title').textContent = task.title;
-    clone.querySelector('.dueDate').textContent = task.dueDate ? formatDueDate(task.dueDate) : 'None';
+    clone.querySelector('.dueDate span').textContent = task.dueDate ? formatDueDate(task.dueDate) : 'None';
 
     const priorityText = task.priority === 1 ? 'High' : task.priority === 2 ? 'Medium' : 'Low';
     const priorityEl = clone.querySelector('.priority');
@@ -230,7 +230,7 @@ flatpickr("input[name='dueDate']", {
 
 // ボタン操作のイベント委任
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.dueDate').forEach(el => {
+  document.querySelectorAll('.dueDate span').forEach(el => {
     if (el.textContent.includes('T')) {
       const raw = el.textContent.trim();
       el.textContent = formatDueDate(raw);

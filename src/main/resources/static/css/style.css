@@ -257,6 +257,13 @@ select:focus {
   box-shadow: 0 0 4px rgba(74, 144, 226, 0.6);
 }
 
+.dueDate {
+  white-space: nowrap;
+  display: inline-block;
+  font-size: 15px;
+  margin-right: 12px;
+}
+
 .priority-container {
   display: inline-flex;
   align-items: center;

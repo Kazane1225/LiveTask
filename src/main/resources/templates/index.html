@@ -65,8 +65,7 @@
                draggable="true"
                th:classappend="${task.completed} ? 'completed'">
             <span class="title" th:text="${task.title}"></span>
-            <span>Due:</span>
-            <span class="dueDate" th:text="${task.dueDate}"></span>
+            <span class="dueDate">Due: <span th:text="${task.dueDate != null} ? ${task.dueDate} : 'None'"></span></span>
             <span class="priority-container">Priority:
               <span class="priority" 
               th:attr="data-priority=${task.priority == 1 ? 'High' : task.priority == 2 ? 'Medium' : 'Low'}"></span>
@@ -93,8 +92,7 @@
                class="task completed"
                draggable="true">
             <span class="title" th:text="${task.title}"></span>
-            <span>Due:</span>
-            <span class="dueDate" th:text="${task.dueDate}"></span>
+            <span class="dueDate">Due: <span th:text="${task.dueDate != null} ? ${task.dueDate} : 'None'"></span></span>
             <span class="priority-container">Priority:
               <span class="priority" 
               th:attr="data-priority=${task.priority == 1 ? 'High' : task.priority == 2 ? 'Medium' : 'Low'}"></span>
@@ -112,8 +110,7 @@
     <template id="taskTemplate">
       <div class="task" data-id="">
         <span class="title"></span>
-        <span>Due:</span>
-        <span class="dueDate"></span>
+        <span class="dueDate">Due: <span></span></span>
         <span class="priority-container">Priority:
           <span class="priority"></span>
         </span>
