@@ -34,7 +34,7 @@ public class ChatGPTService {
         Map<String, Object> body = Map.of(
                 "model", "gpt-4o",
                 "messages", List.of(message),
-                "max_tokens", 50
+                "max_tokens", 70
         );
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
