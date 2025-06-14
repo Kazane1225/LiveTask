@@ -5,6 +5,7 @@ import com.example.livetask.model.User;
 import com.example.livetask.repository.TaskRepository;
 import com.example.livetask.repository.UserRepository;
 import com.example.livetask.service.ChatGPTService;
+import com.example.livetask.service.TaskService;
 
 import jakarta.validation.Valid;
 
@@ -38,6 +39,9 @@ public class TaskController {
     @Autowired
     private ChatGPTService chatGPTService;
 
+    @Autowired
+    private TaskService taskService;
+
     public TaskController(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
@@ -51,10 +55,8 @@ public class TaskController {
     @GetMapping("/tasks")
     public String taskList(Model model, Principal principal) {
         if (principal == null) return "redirect:/login";
-
         String email = principal.getName();
-        Optional<User> user = userRepository.findByEmail(email);
-        List<Task> tasks = taskRepository.findByUser(user);
+        List<Task> tasks = taskService.searchTasksByEmail(email);
         model.addAttribute("tasks", tasks);
         return "index";
     }
@@ -62,9 +64,7 @@ public class TaskController {
     @PostMapping("/add")
     @ResponseBody
     public ResponseEntity<?> addTask(@ModelAttribute @Valid Task task, BindingResult result, Principal principal) {
-        if (principal == null) {
-            return ResponseEntity.status(401).build(); // or redirect or error JSON
-        }
+        if (principal == null) return ResponseEntity.status(401).build();
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             result.getFieldErrors().forEach(err -> errors.put(err.getField(), err.getDefaultMessage()));
@@ -73,65 +73,32 @@ public class TaskController {
 
         String email = principal.getName();
         User user = userRepository.findByEmail(email).orElseThrow();
-        task.setUser(user);  // ★ ユーザーとタスクを紐づけ
 
-        task.setCompleted(false);
-        if (task.getPriority() == null) {
-            task.setPriority(3);
-        }
-
-        // 重複チェック（同ユーザー内で）
-        if (taskRepository.existsByTitleAndUser(task.getTitle(), user)) {
+        try {
+            Task saved = taskService.createTask(task, user);
+            return ResponseEntity.ok(saved);
+        } catch (IllegalArgumentException e) {
             Map<String, String> errors = new HashMap<>();
-            String message = messageSource.getMessage("task.title.duplicate", null, Locale.getDefault());
-            errors.put("title", message);
+            String msg = messageSource.getMessage("task.title.duplicate", null, Locale.getDefault());
+            errors.put("title", msg);
             return ResponseEntity.badRequest().body(errors);
         }
-
-        Task saved = taskRepository.save(task);
-        return ResponseEntity.ok(saved);
     }
 
     @PostMapping("/delete/{id}")
     @ResponseBody
     public ResponseEntity<?> deleteTask(@PathVariable Long id, Principal principal) {
         if (principal == null) return ResponseEntity.status(401).build();
-
-        Optional<Task> taskOpt = taskRepository.findById(id);
-        if (taskOpt.isEmpty()) return ResponseEntity.notFound().build();
-
-        Task task = taskOpt.get();
         String email = principal.getName();
         User user = userRepository.findByEmail(email).orElseThrow();
-
-        // 所有者確認
-        if (!task.getUser().getId().equals(user.getId())) {
-            return ResponseEntity.status(403).build();
-        }
-
-        taskRepository.delete(task);
-        return ResponseEntity.ok().build();
+        boolean deleted = taskService.deleteTaskById(id, user);
+        return deleted ? ResponseEntity.ok().build() : ResponseEntity.status(403).build();
     }
 
     @PostMapping("/toggle/{id}")
     @ResponseBody
     public Map<String, Object> toggleTask(@PathVariable Long id) {
-        Task task = taskRepository.findById(id).orElseThrow();
-        boolean wasAlreadyCompleted = task.isCompleted();
-        task.setCompleted(!task.isCompleted());
-        taskRepository.save(task);
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("id", task.getId());
-        result.put("completed", task.isCompleted());
-        result.put("title", task.getTitle());
-        result.put("priority", task.getPriority());
-        if (!wasAlreadyCompleted && task.isCompleted()) {
-            // 褒めメッセージ生成
-            String praise = chatGPTService.generatePraise(task.getTitle());
-            result.put("message", praise);
-        }
-        return result;
+        return taskService.toggleTask(id);
     }
 
     @PostMapping("/tasks/sort")
@@ -140,15 +107,7 @@ public class TaskController {
         if(principal == null) return List.of();
         String email = principal.getName();
         User user = userRepository.findByEmail(email).orElseThrow();
-        List<String> tags = body.get("tags");
-        Sort sort = Sort.unsorted();
-        if(tags != null && !tags.isEmpty()) {
-            List<Sort.Order> orders = new ArrayList<>();
-            if(tags.contains("priority")) orders.add(Sort.Order.asc("priority"));
-            if(tags.contains("dueDate")) orders.add(Sort.Order.asc("dueDate"));
-            sort = Sort.by(orders);
-        }
-        return taskRepository.findByUser(user, sort);
+        return taskService.sortTasksByTags(user, body.get("tags"));
     }
 
     @GetMapping("/delete-account")
@@ -161,17 +120,11 @@ public class TaskController {
     @Transactional
     public String deleteAccount(Principal principal) {
         if (principal == null) return "redirect:/login";
-
         String email = principal.getName();
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            // 関連タスク削除
-            taskRepository.deleteAllByUser(user);
-            // アカウント削除
+        userRepository.findByEmail(email).ifPresent(user -> {
+            taskService.deleteAllByUser(user);
             userRepository.delete(user);
-        }
-
+        });
         return "redirect:/login";
     }
 }
