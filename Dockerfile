@@ -14,5 +14,5 @@ RUN chmod +x mvnw
 RUN ./mvnw clean package -DskipTests
 
 # アプリを起動する
-CMD ["java", "-jar", "target/livetask-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "target/livetask-0.0.2-SNAPSHOT.jar"]
 
