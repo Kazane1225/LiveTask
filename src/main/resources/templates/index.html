@@ -65,9 +65,10 @@
     </div>
 
     <!-- SSRで既存タスクを埋め込む（JSで再描画） -->
-    <div id="ssr" style="display:none">
-      <div th:each="t : ${jsonTasks}" th:attr="data-json=${t}"></div>
-    </div>
+    <script th:inline="javascript">
+      window.__TASKS__ = /*[[${tasks}]]*/ [];
+    </script>
+
 
     <!-- Hidden Task Template -->
     <template id="taskTemplate">

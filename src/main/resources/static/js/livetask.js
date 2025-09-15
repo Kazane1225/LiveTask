@@ -115,8 +115,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
   $('#modalBackdrop').addEventListener('click', closeModal);
 
   // hydrate from SSR
-  const ssrTasks = $$('#ssr [data-json]').map(n=>JSON.parse(n.getAttribute('data-json')));
-  if(ssrTasks.length) mountTasks(ssrTasks);
+  const ssrTasks = Array.isArray(window.__TASKS__) ? window.__TASKS__ : [];
+  if (ssrTasks.length) mountTasks(ssrTasks);
 
   // Sort UI
   $('#sortBy').addEventListener('change', applySort);
