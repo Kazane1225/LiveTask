@@ -18,30 +18,15 @@
       <div th:if="${error}" class="error-message" th:text="${error}"></div>
       <form th:action="@{/register}" method="post" th:object="${form}">
         <div>
-          <input type="text" th:field="*{username}" placeholder="Username" required>
-          <span class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
-        </div>
-
-        <div>
           <input type="email" th:field="*{email}" placeholder="Email Address" required>
           <span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
         </div>
 
         <div class="password-container">
           <input type="password" th:field="*{password}" placeholder="Password" required>
-          <span class="toggle-password" onclick="togglePassword(this)">
-            <i class="fa fa-eye"></i>
-          </span>
           <span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
         </div>
 
-        <div class="password-container">
-          <input type="password" th:field="*{confirmPassword}" placeholder="Confirm Password" required>
-          <span class="toggle-password" onclick="togglePassword(this)">
-            <i class="fa fa-eye"></i>
-          </span>
-          <span class="error" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></span>
-        </div>
         <button type="submit">Register</button>
         <p class="link">
           <a th:href="@{/login}">Back to Login</a><br>

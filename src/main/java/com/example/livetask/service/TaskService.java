@@ -1,6 +1,7 @@
 package com.example.livetask.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,16 +81,38 @@ public class TaskService {
         return result;
     }
 
-    public List<Task> sortTasksByTags(User user, List<String> tags) {
-        Sort sort = Sort.unsorted();
-        if (tags != null && !tags.isEmpty()) {
-            List<Sort.Order> orders = new ArrayList<>();
-            if (tags.contains("priority")) orders.add(Sort.Order.asc("priority"));
-            if (tags.contains("dueDate")) orders.add(Sort.Order.asc("dueDate"));
-            sort = Sort.by(orders);
+     // TaskService.java（概略）
+public List<Task> sortTasks(User user, List<String> tags, boolean desc) {
+    List<Task> tasks = searchTasksByEmail(user.getEmail()); // 既存の取得
+
+    Comparator<Task> cmp = null;
+    for (String tag : (tags == null ? List.<String>of() : tags)) {
+        Comparator<Task> part = switch (tag) {
+            case "priority" -> Comparator.comparing(
+                Task::getPriority,
+                Comparator.nullsLast(Comparator.naturalOrder())
+            );
+            case "dueDate" -> Comparator.comparing(
+                t -> firstNonNull(t.getDueDateFrom(), t.getDueDateTo()),
+                Comparator.nullsLast(Comparator.naturalOrder())
+            );
+            case "created" -> Comparator.comparing(
+                Task::getCreatedAt, // ← フィールドが無いなら追加（@CreationTimestamp推奨）
+                Comparator.nullsLast(Comparator.naturalOrder())
+            );
+            default -> null;
+        };
+        if (part != null) {
+            cmp = (cmp == null) ? part : cmp.thenComparing(part);
         }
-        return taskRepository.findByUser(user, sort);
     }
+    if (cmp == null) return tasks; // タグ指定なしはそのまま
+
+    if (desc) cmp = cmp.reversed();
+    return tasks.stream().sorted(cmp).toList();
+}
+
+private static <T> T firstNonNull(T a, T b) { return a != null ? a : b; }
 
     public void deleteAllByUser(User user) {
         taskRepository.deleteAllByUser(user);

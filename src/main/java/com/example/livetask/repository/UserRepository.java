@@ -7,14 +7,8 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    // ユーザー名で検索
-    Optional<User> findByUsername(String username);
-
     // メールアドレスで検索（重複チェックなどで使う）（ログイン処理などで使う）
     Optional<User> findByEmail(String email);
-
-    // ユーザー名の存在確認（バリデーションなどで使う）
-    boolean existsByUsername(String username);
 
     // メールの存在確認
     boolean existsByEmail(String email);

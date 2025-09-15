@@ -1,0 +1,36 @@
+services:
+  livetask-db:
+    image: postgres:17
+    container_name: livetask-db
+    environment:
+      POSTGRES_DB: livetask
+      POSTGRES_USER: livetask
+      POSTGRES_PASSWORD: livetask
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - livetask-net
+
+  livetask-app:
+    build: .
+    container_name: livetask-app
+    depends_on:
+      - livetask-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://livetask-db:5432/livetask
+      SPRING_DATASOURCE_USERNAME: livetask
+      SPRING_DATASOURCE_PASSWORD: livetask
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_JPA_SHOW_SQL: "true"
+    ports:
+      - "8080:8080"
+    networks:
+      - livetask-net
+
+volumes:
+  db_data:
+
+networks:
+  livetask-net:

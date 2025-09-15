@@ -1,239 +1,198 @@
-/* 全体背景とフォント */
-body {
-  font-family: "Segoe UI", sans-serif;
-  background: linear-gradient(135deg, #cce0ff, #e8f2ff);
-  margin: 0;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* ===== Tokens ===== */
+:root{
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+
+  --bg: #f7f9fc;
+  --bg-accent: radial-gradient(1200px 800px at 20% -10%, #eaf2ff 0%, rgba(234,242,255,0) 60%),
+               radial-gradient(1000px 700px at 120% 10%, #f2f7ff 0%, rgba(242,247,255,0) 60%);
+  --surface: #ffffff;
+  --border: #e5e9f2;
+  --border-strong:#d5dbe7;
+  --text:#0f172a;
+  --muted:#475569;
+
+  --brand:#1f75fe;
+  --brand-600:#155fcf;
+  --success-bg:#e8f3ff; --success-fg:#0b63ff; --success-bd:#8bbcff;
+  --error-bg:#ffe8e8;  --error-fg:#e03131;  --error-bd:#ff9b9b;
+
+  --radius:14px; --r-md:12px; --r-sm:10px;
+  --shadow-sm: 0 1px 2px rgba(15,23,42,.05);
+  --shadow-md: 0 6px 20px rgba(15,23,42,.10);
+  --focus-ring: 0 0 0 3px rgba(31,117,254,.25);
 }
 
-/* 中央コンテナ */
-.auth-container {
-  display: block;
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0b1220;
+    --bg-accent: radial-gradient(1200px 800px at 20% -10%, rgba(32,61,120,.35) 0%, rgba(0,0,0,0) 60%),
+                 radial-gradient(1000px 700px at 120% 10%, rgba(18,40,92,.35) 0%, rgba(0,0,0,0) 60%);
+    --surface:#0f172a;
+    --border:#1f2a44;
+    --border-strong:#2b395c;
+    --text:#e5e7eb; --muted:#9aa7c7;
+    --brand:#3b82f6; --brand-600:#2563eb;
+    --success-bg:#0f2346; --success-fg:#8fb8ff; --success-bd:#284a8f;
+    --error-bg:#3a1111;  --error-fg:#ffb3b3;  --error-bd:#813b3b;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.35);
+    --shadow-md: 0 10px 28px rgba(0,0,0,.45);
+    --focus-ring: 0 0 0 3px rgba(59,130,246,.35);
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important}
+}
+
+/* ===== Layout ===== */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:var(--font-sans);
+  margin:0; color:var(--text);
+  background: var(--bg);
+  background-image: var(--bg-accent);
+  display:grid; place-items:center;
+  padding:24px;
+}
+
+.auth-container{
   width: 100%;
-  padding: 20px;
-  box-sizing: border-box;
+  max-width: 760px;   /* 好みで 640〜800 の範囲で */
+  margin: 0 auto;
 }
 
-/* カード本体：幅が画面に応じて変化 */
+/* Card */
 .auth-card {
   background-color: white;
-  padding: 40px;
+  padding: 48px 40px;
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 80, 180, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 80, 180, 0.25);
   margin: 0 auto;
   width: 100%;
-  max-width: clamp(360px, 80vw, 1000px);
-  animation: fadeInUp 0.5s ease;
+  max-width: 700px; /* PCではしっかり幅を確保 */
+  min-width: 400px; /* あまり小さくならないように */
 }
 
-/* タイトル */
+/* Titles */
 .auth-card h1 {
-  font-family: 'Zen Kaku Gothic New', sans-serif;
-  font-size: 2.8rem;
-  background: linear-gradient(to right, #3a8dde, #6fb3ff);
+  font-family: "Zen Kaku Gothic New", var(--font-sans);
+  font-weight: 800;
+  font-size: clamp(28px, 3.2vw, 34px);
+  line-height: 1.2;
+  margin: 0 0 8px;
+  color: var(--text);
+  letter-spacing: .2px;
+  background: linear-gradient(90deg, var(--text) 0%, color-mix(in srgb, var(--brand), #fff 25%) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-align: center;
-  margin-bottom: 20px;
+  text-align: center;   /* 中央寄せ */
+  display: block;
 }
 
-/* 見出し */
+/* Section title: Login */
 .auth-card h2 {
-  margin-bottom: 24px;
-  color: #1f4e79;
-  font-size: 24px;
-  text-align: center;
-  position: relative;
+  margin: 0 0 18px;
+  font-size: clamp(16px, 2.2vw, 18px);
+  font-weight: 700;
+  color: var(--muted);
+  text-align: center;   /* 中央寄せ */
+  display: block;
+  align-items: center;
+  gap: 8px;
 }
+
+/* 下線アクセント（好みで） */
 .auth-card h2::after {
   content: "";
   display: block;
   height: 2px;
   width: 40px;
-  background-color: #4a90e2;
-  margin: 8px auto 0;
-  border-radius: 2px;
+  margin: 6px auto 0;   /* autoで中央に */
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--brand), white 35%);
 }
 
-/* 入力フォーム */
-.auth-card input {
-  width: 100%;
-  padding: 14px;
-  margin-bottom: 16px;
-  border: 1px solid #aacbe2;
-  border-radius: 8px;
-  font-size: 16px;
-  background-color: #f5faff;
-  transition: border-color 0.2s;
-  box-sizing: border-box;
-}
 
-.auth-card input:focus {
-  border-color: #4a90e2;
-  outline: none;
-  box-shadow: 0 0 4px rgba(74, 144, 226, 0.5);
-}
-
-.checkbox-container {
-  margin-bottom: 16px;
-  font-size: 14px;
-  color: #333;
-}
-
-.checkbox-container label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-}
-
-.checkbox-container input[type="checkbox"] {
-  margin: 0;
-  transform: scale(1.1);
-  accent-color: #1f75fe;
-}
-
-/* ボタン */
-.auth-card button {
-  width: 100%;
-  padding: 14px;
-  background-color: #1f75fe;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-.auth-card button:hover {
-  background-color: #155fcf;
-  transform: translateY(-1px);
-}
-
-/* リンク */
-.auth-card .link {
-  margin-top: 16px;
-  text-align: center;
-  font-size: 14px;
-}
-.auth-card .link a {
-  color: #1f75fe;
-  text-decoration: none;
-}
-.auth-card .link a:hover {
-  text-decoration: underline;
-}
-
-.password-container {
-  position: relative;
+/* Inputs */
+.auth-card input{
   width:100%;
+  padding:12px 14px;
+  margin:0 0 14px;
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  background:#fff;
+  color:var(--text);
+  font-size:16px;
+  box-shadow:var(--shadow-sm);
+  transition:border-color .15s, box-shadow .15s, background-color .15s;
+}
+.auth-card input::placeholder{color:color-mix(in srgb, var(--muted), #fff 25%)}
+.auth-card input:focus-visible{
+  outline:none; border-color:var(--brand);
+  box-shadow: var(--shadow-sm), var(--focus-ring);
+}
+.auth-card input:user-invalid{border-color:#ef4444}
+
+/* Checkbox */
+.checkbox-container{
+  margin:6px 0 14px; font-size:14px; color:var(--muted);
+  display:flex; align-items:center; gap:8px;
+}
+.checkbox-container input[type="checkbox"]{
+  accent-color:var(--brand);
+  width:16px; height:16px; margin:0;
 }
 
-.password-container input {
-  width: 100%;
-  padding-right: 40px;
-  box-sizing: border-box;
+/* Password field with toggle */
+.password-container{position:relative}
+.password-container input{padding-right:44px}
+.toggle-password{
+  position:absolute; right:10px; top:50%; transform:translateY(-50%);
+  border:1px solid var(--border); background:var(--surface); color:var(--muted);
+  width:36px; height:36px; border-radius:10px; display:grid; place-items:center;
+  cursor:pointer; transition:background .15s, box-shadow .15s, border-color .15s;
 }
+.toggle-password:hover{background:color-mix(in srgb, var(--surface), #000 3%)}
+.toggle-password:focus-visible{outline:none; box-shadow:var(--focus-ring)}
 
-.toggle-password {
-  position: absolute;
-  inset: 0 12px 0 auto;
-  display: flex;
-  cursor: pointer;
-  font-size: 1.2rem;
-  color: #444;
-  margin-top: 16px;
+/* Button */
+.auth-card button{
+  width:100%; padding:12px 14px;
+  border-radius:var(--r-sm);
+  border:1px solid transparent;
+  background:var(--brand); color:#fff;
+  font-size:16px; font-weight:700; letter-spacing:.2px;
+  cursor:pointer; transition:background-color .15s, transform .06s;
+  box-shadow:var(--shadow-sm);
 }
+.auth-card button:hover{background:var(--brand-600)}
+.auth-card button:active{transform:translateY(1px)}
+.auth-card button:focus-visible{outline:none; box-shadow:var(--focus-ring)}
 
-/* メッセージ */
-.success-message,
-.error-message {
-  margin: 10px 0;
-  font-size: 16px;
-  font-weight: 500;
-  text-align: center;
-  padding: 10px;
-  border-radius: 6px;
-}
-.success-message {
-  background-color: #e0f2ff;
-  color: #0565ff;
-  border: 1px solid #81c4ff;
-}
-.error-message {
-  background-color: #ffe8e8;
-  color: #e03131;
-  border: 1px solid #ff9090;
-}
+/* Links */
+.auth-card .link{margin-top:12px; text-align:center; font-size:14px; color:var(--muted)}
+.auth-card .link a{color:var(--brand); text-decoration:underline; text-underline-offset:2px}
 
-.error {
-  color: red;
-  font-size: 0.9em;
+/* Messages */
+.success-message,.error-message{
+  margin:10px 0; font-size:15px; font-weight:600; text-align:center;
+  padding:10px 12px; border-radius:12px; border:1px solid transparent;
 }
+.success-message{ background:var(--success-bg); color:var(--success-fg); border-color:var(--success-bd) }
+.error-message{   background:var(--error-bg);   color:var(--error-fg);   border-color:var(--error-bd) }
 
-/* アニメーション */
-.slide-in {
-  opacity: 0;
-  transform: translateX(-50px);
-  animation: slideIn 0.8s ease-out forwards;
-}
-@keyframes slideIn {
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+.error{ color:#e03131; font-size:.9rem; }
 
-/* モバイル対応 */
-@media (max-width: 480px) {
-  body {
-    overflow-x: hidden;
-  }
+/* Subtle animations */
+@keyframes fadeInUp{ from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:translateY(0)} }
 
-  .auth-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0 12px;
-    box-sizing: border-box;
-    width: 100%;
-  }
-
-  .auth-card {
-    padding: 24px 16px;
-    width: 100%;
-    max-width: 360px;
-    box-sizing: border-box;
-    margin: 0 auto;
-  }
-  .auth-card h1 {
-    font-size: 2.2rem;
-  }
-  .auth-card input {
-    width:100%;
-    box-sizing: border-box;
-  }
-  .auth-card button {
-    width: 100%;
-    font-size: 15px;
-    padding: 12px;
-  }
-  .password-container input {
-    width: 100%;
-    box-sizing: border-box;
+/* Mobile tweaks */
+@media (max-width:480px){
+  body{padding:16px}
+  .auth-container{width:100%}
+  .auth-card{
+    padding:20px;
+    max-width: 90%;
   }
 }

@@ -23,6 +23,8 @@ public class SecurityConfig {
             )
             .formLogin(form -> form
                 .loginPage("/login")
+                .usernameParameter("email")
+                .passwordParameter("password")
                 .defaultSuccessUrl("/tasks", true)      // ログイン後のリダイレクト先
                 .permitAll()
             )

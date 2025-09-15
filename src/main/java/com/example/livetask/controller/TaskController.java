@@ -1,5 +1,6 @@
 package com.example.livetask.controller;
 
+import com.example.livetask.dto.SortRequest;
 import com.example.livetask.model.Task;
 import com.example.livetask.model.User;
 import com.example.livetask.repository.UserRepository;
@@ -93,11 +94,11 @@ public class TaskController {
 
     @PostMapping("/tasks/sort")
     @ResponseBody
-    public List<Task> sortTasks(@RequestBody Map<String, List<String>> body, Principal principal) {
-        if(principal == null) return List.of();
+    public List<Task> sortTasks(@RequestBody SortRequest req, Principal principal) {
+        if (principal == null) return List.of();
         String email = principal.getName();
         User user = userRepository.findByEmail(email).orElseThrow();
-        return taskService.sortTasksByTags(user, body.get("tags"));
+        return taskService.sortTasks(user, req.getTags(), Boolean.TRUE.equals(req.getDesc()));
     }
 
     @GetMapping("/delete-account")

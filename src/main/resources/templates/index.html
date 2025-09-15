@@ -1,125 +1,128 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="description" content="LiveTask is a simple and free task management app. No sign-up required. Organize your work or study efficiently on PC and mobile.">
-  <meta name="robots" content="index, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="_csrf" th:content="${_csrf.token}">
   <meta name="_csrf_header" th:content="${_csrf.headerName}">
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <title>LiveTask</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}">
+
   <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" th:href="@{/css/livetask.css}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script th:src="@{/js/app.js}" defer></script>
-  <meta name="google-site-verification" content="2Cmj8APJtP5JfUmNGQnj2GxIIG-kN8qdixjNUTOuf20" />
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 </head>
 <body>
-  <div class="account-links">
-    <a href="/login" class="account-link">Back to Login</a>
-    |
-    <a href="/delete-account" class="account-link delete">Delete My Account</a>
-  </div>
-
-  <div class="container">
-    <h1>Current Tasks</h1>
-
-    <!-- Task Add Form -->
-    <div id="formErrors" class="error-messages"></div>
-    <form id="taskForm" th:action="@{/add}" method="post">
-      <input type="text" name="title" placeholder="Task Title">
-      <input type="text" name="dueDate" placeholder="Due: YYYY/MM/DD HH:mm" autocomplete="off">
-      <label for="priority">Priority</label>
-      <select name="priority" id="priority">
-        <option value="" disabled selected>--------</option>
-        <option value="1">High</option>
-        <option value="2">Medium</option>
-        <option value="3">Low</option>
-      </select>
-      <button type="submit">Add</button>
-    </form>
-
-    <!-- Task Lists -->
-    <div class="task-columns">
-      <div class="task-section">
-        <h2>In Progress</h2>
-        <form class="task-checkboxes" th:action="@{/tasks/sort}" method="post">
-          <label>
-            <span id="checkboxes-sort">Sort by</span>
-          </label>
-          <label>
-            <input type="checkbox" name="tags" value="priority"> Priority
-          </label>
-          <label>
-            <input type="checkbox" name="tags" value="dueDate"> Due Date Time
-          </label>
-        </form>
-        <div id="inProgressTasks" class="taskList">
-          <div th:each="task : ${tasks}" 
-               th:if="!${task.completed}"
-               th:attr="data-id=${task.id}"
-               class="task"
-               draggable="true"
-               th:classappend="${task.completed} ? 'completed'">
-            <span class="title" th:text="${task.title}"></span>
-            <span class="dueDate">Due: <span th:text="${task.dueDate != null} ? ${task.dueDate} : 'None'"></span></span>
-            <span class="priority-container">Priority:
-              <span class="priority" 
-              th:attr="data-priority=${task.priority == 1 ? 'High' : task.priority == 2 ? 'Medium' : 'Low'}"></span>
-            </span>
-            <div class="task-buttons">
-              <button type="button" class="deleteBtn">Delete</button>
-              <button type="button" class="toggleBtn">Done</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="task-section">
-        <h2>Completed</h2>
-        <div class="task-checkboxes dummy">
-          <label><span>Sort by</span></label>
-          <label><input type="checkbox"> Priority</label>
-          <label><input type="checkbox"> Due Date Time</label>
-        </div>
-        <div id="completedTasks" class="taskList">
-          <div th:each="task : ${tasks}"
-               th:if="${task.completed}"
-               th:attr="data-id=${task.id}"
-               class="task completed"
-               draggable="true">
-            <span class="title" th:text="${task.title}"></span>
-            <span class="dueDate">Due: <span th:text="${task.dueDate != null} ? ${task.dueDate} : 'None'"></span></span>
-            <span class="priority-container">Priority:
-              <span class="priority" 
-              th:attr="data-priority=${task.priority == 1 ? 'High' : task.priority == 2 ? 'Medium' : 'Low'}"></span>
-            </span>
-            <div class="task-buttons">
-              <button type="button" class="deleteBtn">Delete</button>
-              <button type="button" class="toggleBtn">In Progress</button>
-            </div>
-          </div>
+  <!-- ナビバー -->
+  <header class="navbar">
+    <div class="brand"><i class="fa-regular fa-square-check"></i> LiveTask</div>
+    <div class="nav-actions">
+      <button id="openNewTask" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;New Task</button>
+      <div class="menu" id="userMenu">
+        <button class="icon-btn" id="userMenuBtn" aria-haspopup="true" aria-expanded="false" title="Account">
+          <i class="fa-regular fa-user"></i>
+        </button>
+        <div class="menu-panel" role="menu" aria-label="Account">
+          <a href="/login" role="menuitem">Logout</a>
+          <div class="menu-sep"></div>
+          <a href="/delete-account" class="danger" role="menuitem">Delete my account</a>
         </div>
       </div>
     </div>
+  </header>
 
-    <!-- Hidden Task Template for JavaScript -->
+  <main class="container">
+    <h1>Current Tasks</h1>
+
+    <!-- ソートバー -->
+    <div class="sortbar">
+      <label for="sortBy">Sort by</label>
+      <select id="sortBy" class="select" aria-label="Sort tasks">
+        <option value="dueDate">Due date</option>
+        <option value="priority">Priority</option>
+        <option value="created">Created</option>
+      </select>
+      <button id="sortDir" class="icon-btn" title="Toggle sort direction" aria-pressed="false">
+        <i class="fa-solid fa-arrow-down-wide-short"></i>
+      </button>
+    </div>
+
+    <div class="columns">
+      <!-- In Progress -->
+      <section class="panel" aria-labelledby="inProgressHeading">
+        <h2 id="inProgressHeading">In Progress</h2>
+        <div id="inProgressTasks" class="taskList" aria-live="polite"></div>
+      </section>
+
+      <!-- Completed -->
+      <section class="panel" aria-labelledby="completedHeading">
+        <h2 id="completedHeading">Completed</h2>
+        <div id="completedEmpty" class="empty">No completed tasks yet. Mark a task as done and it will show up here.</div>
+        <div id="completedTasks" class="taskList" aria-live="polite"></div>
+      </section>
+    </div>
+
+    <!-- SSRで既存タスクを埋め込む（JSで再描画） -->
+    <div id="ssr" style="display:none">
+      <div th:each="task : ${tasks}" th:attr="data-json=${task}"></div>
+    </div>
+
+    <!-- Hidden Task Template -->
     <template id="taskTemplate">
-      <div class="task" data-id="">
-        <span class="title"></span>
-        <span class="dueDate">Due: <span></span></span>
-        <span class="priority-container">Priority:
-          <span class="priority"></span>
-        </span>
-        <div class="task-buttons">
-          <button type="button" class="deleteBtn">Delete</button>
-          <button type="button" class="toggleBtn">Done</button>
+      <article class="task" data-id="">
+        <div>
+          <div class="title"></div>
+          <div class="meta">
+            <span class="due"><i class="fa-regular fa-calendar"></i> <span class="dueText">None</span></span>
+            <div class="pills"><span class="pill priority-pill">Low</span></div>
+          </div>
         </div>
-      </div>
+        <div class="actions">
+          <button class="btn btn-primary toggleBtn">Done</button>
+          <button class="icon-btn danger deleteBtn" title="Delete"><i class="fa-regular fa-trash-can"></i></button>
+        </div>
+      </article>
     </template>
-  </div>
+  </main>
+
+  <!-- New Task Modal -->
+  <section class="modal" id="taskModal" hidden>
+    <div class="backdrop" id="modalBackdrop" tabindex="-1" aria-hidden="true"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Add a task</h3>
+      <div id="formErrors" class="error-messages" aria-live="polite"></div>
+      <form id="taskForm" th:action="@{/add}" method="post" class="grid">
+        <div class="field full">
+          <label for="title">Title</label>
+          <input id="title" type="text" name="title" placeholder="Add a new task…" required>
+        </div>
+        <div class="field">
+          <label for="dueDateFrom">From</label>
+          <input type="text" name="dueDateFrom" id="dueDateFrom" placeholder="mm/dd/yyyy hh:mm" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="dueDateTo">To</label>
+          <input type="text" name="dueDateTo" id="dueDateTo" placeholder="mm/dd/yyyy hh:mm" autocomplete="off">
+          <div class="help"><button type="button" id="copyFromTo" class="btn btn-secondary">Copy from</button></div>
+        </div>
+        <div class="field full">
+          <label for="priority">Priority</label>
+          <select name="priority" id="priority" class="select">
+            <option value="3" selected>Low</option>
+            <option value="2">Medium</option>
+            <option value="1">High</option>
+          </select>
+        </div>
+        <div class="field full" style="display:flex; gap:8px; justify-content:flex-end;">
+          <button type="button" id="closeModal" class="btn">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Add</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script th:src="@{/js/livetask.js}" defer></script>
 </body>
 </html>

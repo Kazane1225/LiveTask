@@ -53,13 +53,6 @@ public class AuthController {
             return "register";
         }
 
-        if (!form.getPassword().equals(form.getConfirmPassword())) {
-            String message = messageSource.getMessage("register.password.mismatch", null, locale);
-            model.addAttribute("error", message);
-            model.addAttribute("form", form);
-            return "register";
-        }
-
         if (userRepository.existsByEmail(form.getEmail())) {
             String message = messageSource.getMessage("register.duplicate", null, locale);
             model.addAttribute("error", message);
@@ -68,7 +61,6 @@ public class AuthController {
         }
 
         User user = new User();
-        user.setUsername(form.getUsername());
         user.setEmail(form.getEmail());
         user.setPassword(passwordEncoder.encode(form.getPassword()));
         userRepository.save(user);
