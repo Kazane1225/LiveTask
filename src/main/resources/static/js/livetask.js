@@ -121,8 +121,20 @@ document.addEventListener('DOMContentLoaded', ()=>{
   // Sort UI
   $('#sortBy').addEventListener('change', applySort);
   $('#sortDir').addEventListener('click', (e)=>{
-    const on = e.currentTarget.getAttribute('aria-pressed')==='true';
-    e.currentTarget.setAttribute('aria-pressed', String(!on));
+    const isDesc = e.currentTarget.getAttribute('aria-pressed')==='true';
+    e.currentTarget.setAttribute('aria-pressed', String(!isDesc));
+
+    const icon = e.currentTarget.querySelector('i');
+    if (!isDesc) {
+      // 降順に切り替え
+      icon.classList.remove('fa-arrow-down-wide-short');
+      icon.classList.add('fa-arrow-up-wide-short');
+    } else {
+      // 昇順に切り替え
+      icon.classList.remove('fa-arrow-up-wide-short');
+      icon.classList.add('fa-arrow-down-wide-short');
+    }
+
     applySort();
   });
 
