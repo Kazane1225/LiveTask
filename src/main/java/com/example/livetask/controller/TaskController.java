@@ -46,17 +46,22 @@ public class TaskController {
     }
 
     @GetMapping("/tasks")
-    public String taskList(Model model, Principal principal) {
+    public String taskList(Model model, Principal principal) throws JsonProcessingException {
         if (principal == null) return "redirect:/login";
         String email = principal.getName();
         List<Task> tasks = taskService.searchTasksByEmail(email);
 
-        // ここを jsonTasks ではなく tasks を渡すように修正
-        model.addAttribute("tasks", tasks);
+        ObjectMapper mapper = new ObjectMapper();
+        List<String> jsonTasks = tasks.stream()
+            .map(t -> {
+                try { return mapper.writeValueAsString(t); }
+                catch (JsonProcessingException e) { return "{}"; }
+            })
+            .toList();
 
+        model.addAttribute("jsonTasks", jsonTasks);
         return "index";
     }
-
 
     @PostMapping("/add")
     @ResponseBody
