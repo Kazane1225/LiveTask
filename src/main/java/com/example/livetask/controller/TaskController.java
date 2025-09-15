@@ -5,6 +5,8 @@ import com.example.livetask.model.Task;
 import com.example.livetask.model.User;
 import com.example.livetask.repository.UserRepository;
 import com.example.livetask.service.TaskService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.validation.Valid;
 
@@ -44,13 +46,22 @@ public class TaskController {
     }
 
     @GetMapping("/tasks")
-    public String taskList(Model model, Principal principal) {
+    public String taskList(Model model, Principal principal) throws JsonProcessingException {
         if (principal == null) return "redirect:/login";
         String email = principal.getName();
         List<Task> tasks = taskService.searchTasksByEmail(email);
-        model.addAttribute("tasks", tasks);
+
+        ObjectMapper mapper = new ObjectMapper();
+        List<String> jsonTasks = tasks.stream()
+                                    .map(t -> {
+                                        try { return mapper.writeValueAsString(t); }
+                                        catch (JsonProcessingException e) { return "{}"; }
+                                    })
+                                    .toList();
+        model.addAttribute("jsonTasks", jsonTasks);
         return "index";
     }
+
 
     @PostMapping("/add")
     @ResponseBody
