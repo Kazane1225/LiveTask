@@ -69,9 +69,11 @@ body{
   border-radius: 16px;
   box-shadow: 0 10px 40px rgba(0, 80, 180, 0.25);
   margin: 0 auto;
-  width: 100%;
-  max-width: 700px; /* PCではしっかり幅を確保 */
-  min-width: 400px; /* あまり小さくならないように */
+
+  /* 横スクロールを起こさない幅指定 */
+  width: clamp(280px, calc(100vw - 48px), 700px); /* 48px は body の左右24px×2 */
+  max-width: 700px;
+  min-width: 0; /* ← コレが重要。古い min-width を打ち消す */
 }
 
 /* Titles */
@@ -188,11 +190,15 @@ body{
 @keyframes fadeInUp{ from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:translateY(0)} }
 
 /* Mobile tweaks */
-@media (max-width:480px){
-  body{padding:16px}
-  .auth-container{width:100%}
-  .auth-card{
-    padding:20px;
-    max-width: 90%;
+.auth-container { width: 100%; max-width: 760px; margin: 0 auto; min-width: 0; }
+
+/* モバイル調整（重複を1つにまとめ） */
+@media (max-width: 600px) {
+  body { padding: 16px; } /* 端末が狭いときは余白も縮める */
+  .auth-card {
+    padding: 20px;
+    width: clamp(280px, calc(100vw - 32px), 700px); /* 32px は左右16px×2 */
+    max-width: 700px;
+    min-width: 0;
   }
 }

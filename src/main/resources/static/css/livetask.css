@@ -40,6 +40,9 @@
   --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12);
 
   --focus: 0 0 0 3px rgba(37, 99, 235, 0.25);
+
+  /* アイコンの単色トークン（ライト＝文字色、ダーク＝白） */
+  --icon-mono: var(--text);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -62,6 +65,9 @@
     --shadow-lg: 0 12px 28px rgba(0,0,0,0.45);
 
     --focus: 0 0 0 3px rgba(59, 130, 246, 0.35);
+
+    /* ダーク時はアイコンを白に */
+    --icon-mono: #ffffff;
   }
 }
 
@@ -570,4 +576,14 @@ input:focus-visible, select:focus-visible, a:focus-visible {
 
 @media (min-width: 1920px) {
   .container { max-width: 1440px; }
+}
+
+/* === Icons: account & trash should be white in dark mode === */
+.account-icon i,
+.account-icon svg,
+.trash-icon i,
+.trash-icon svg {
+  color: var(--icon-mono);
+  fill: currentColor;
+  stroke: currentColor;
 }

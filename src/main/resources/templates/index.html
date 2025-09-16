@@ -21,7 +21,7 @@
     <div class="nav-actions">
       <button id="openNewTask" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;New Task</button>
       <div class="menu" id="userMenu">
-        <button class="icon-btn" id="userMenuBtn" aria-haspopup="true" aria-expanded="false" title="Account">
+        <button class="icon-btn account-icon" id="userMenuBtn" aria-haspopup="true" aria-expanded="false" title="Account">
           <i class="fa-regular fa-user"></i>
         </button>
         <div class="menu-panel" role="menu" aria-label="Account">
@@ -69,7 +69,6 @@
       window.__TASKS__ = /*[[${tasks}]]*/ [];
     </script>
 
-
     <!-- Hidden Task Template -->
     <template id="taskTemplate">
       <article class="task" data-id="">
@@ -82,7 +81,7 @@
         </div>
         <div class="actions">
           <button class="btn btn-primary toggleBtn">Done</button>
-          <button class="icon-btn danger deleteBtn" title="Delete"><i class="fa-regular fa-trash-can"></i></button>
+          <button class="icon-btn danger deleteBtn trash-icon" title="Delete"><i class="fa-regular fa-trash-can"></i></button>
         </div>
       </article>
     </template>
