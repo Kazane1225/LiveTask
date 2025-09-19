@@ -582,7 +582,9 @@ input:focus-visible, select:focus-visible, a:focus-visible {
 .account-icon i,
 .account-icon svg,
 .trash-icon i,
-.trash-icon svg {
+.trash-icon svg ,
+.sort-btn i,
+.sort-btn svg {
   color: var(--icon-mono);
   fill: currentColor;
   stroke: currentColor;

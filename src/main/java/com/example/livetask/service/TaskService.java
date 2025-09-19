@@ -82,37 +82,37 @@ public class TaskService {
     }
 
      // TaskService.java（概略）
-public List<Task> sortTasks(User user, List<String> tags, boolean desc) {
-    List<Task> tasks = searchTasksByEmail(user.getEmail()); // 既存の取得
+    public List<Task> sortTasks(User user, List<String> tags, boolean desc) {
+        List<Task> tasks = searchTasksByEmail(user.getEmail()); // 既存の取得
 
-    Comparator<Task> cmp = null;
-    for (String tag : (tags == null ? List.<String>of() : tags)) {
-        Comparator<Task> part = switch (tag) {
-            case "priority" -> Comparator.comparing(
-                Task::getPriority,
-                Comparator.nullsLast(Comparator.naturalOrder())
-            );
-            case "dueDate" -> Comparator.comparing(
-                t -> firstNonNull(t.getDueDateFrom(), t.getDueDateTo()),
-                Comparator.nullsLast(Comparator.naturalOrder())
-            );
-            case "created" -> Comparator.comparing(
-                Task::getCreatedAt, // ← フィールドが無いなら追加（@CreationTimestamp推奨）
-                Comparator.nullsLast(Comparator.naturalOrder())
-            );
-            default -> null;
-        };
-        if (part != null) {
+        Comparator<Task> cmp = null;
+        for (String tag : (tags == null ? List.<String>of() : tags)) {
+            Comparator<Task> part = switch (tag) {
+                case "priority" -> Comparator.comparing(
+                    Task::getPriority,
+                    Comparator.nullsLast(Comparator.naturalOrder())
+                );
+                case "dueDate" -> Comparator.comparing(
+                    t -> firstNonNull(t.getDueDateFrom(), t.getDueDateTo()),
+                    Comparator.nullsLast(Comparator.naturalOrder())
+                );
+                case "created" -> Comparator.comparing(
+                    Task::getCreatedAt, // ← フィールドが無いなら追加（@CreationTimestamp推奨）
+                    Comparator.nullsLast(Comparator.naturalOrder())
+                );
+                default -> null;
+            };
+            if (part != null) {
             cmp = (cmp == null) ? part : cmp.thenComparing(part);
+            }
         }
+        if (cmp == null) return tasks; // タグ指定なしはそのまま
+
+        if (desc) cmp = cmp.reversed();
+        return tasks.stream().sorted(cmp).toList();
     }
-    if (cmp == null) return tasks; // タグ指定なしはそのまま
 
-    if (desc) cmp = cmp.reversed();
-    return tasks.stream().sorted(cmp).toList();
-}
-
-private static <T> T firstNonNull(T a, T b) { return a != null ? a : b; }
+    private static <T> T firstNonNull(T a, T b) { return a != null ? a : b; }
 
     public void deleteAllByUser(User user) {
         taskRepository.deleteAllByUser(user);
